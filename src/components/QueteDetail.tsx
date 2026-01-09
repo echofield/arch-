@@ -1,3 +1,5 @@
+import { Traces } from './Traces';
+import { getStoredCard } from '../utils/card-service';
 import { MamlukGrid } from './MamlukGrid';
 import { BackButton } from './BackButton';
 import { ExternalLink, MapPin, Download } from 'lucide-react';
@@ -184,6 +186,7 @@ const QUETES_DATA: Record<string, QueteData> = {
 export function QueteDetail({ queteId, onBack }: QueteDetailProps) {
   const quete = QUETES_DATA[queteId];
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const cardId = getStoredCard() || 'unknown';
 
   if (!quete) {
     return (
@@ -675,6 +678,14 @@ export function QueteDetail({ queteId, onBack }: QueteDetailProps) {
                     Voir sur Google Maps
                   </a>
                 </div>
+
+                {/* Les Traces — Mémoire des marcheurs précédents */}
+                <Traces
+                  cardId={cardId}
+                  questId={quete.id}
+                  etapeId={`stop-${index}`}
+                  etapeName={stop.name}
+                />
               </div>
             ))}
           </div>
