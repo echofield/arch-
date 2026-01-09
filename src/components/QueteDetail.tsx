@@ -4,9 +4,9 @@ import { ExternalLink, MapPin, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
 // Imgur images for better visual experience
-const luteceImg = 'https://i.imgur.com/1uLhXia.jpeg';
-const revolutionImg = 'https://i.imgur.com/iyCcmoS.jpeg';
-const tableImg = 'https://i.imgur.com/VtWPT2M.jpeg';
+const luteceImg = 'https://i.imgur.com/1uLhXial.jpeg';
+const revolutionImg = 'https://i.imgur.com/iyCcmoSl.jpeg';
+const tableImg = 'https://i.imgur.com/VtWPT2Ml.jpeg';
 
 interface QueteDetailProps {
   queteId: string;

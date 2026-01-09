@@ -1,6 +1,6 @@
 import { MamlukGrid } from './MamlukGrid';
 // Imgur images for better visual experience
-const luteceHero = 'https://i.imgur.com/woVnvZ9.jpeg';
+const luteceHero = 'https://i.imgur.com/woVnvZ9h.jpeg';
 
 interface HomepageV1Props {
   onEnterQuetes: () => void;
