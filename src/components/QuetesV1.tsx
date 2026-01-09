@@ -1,9 +1,10 @@
 import { MamlukGrid } from './MamlukGrid';
 import { BackButton } from './BackButton';
 import { useState } from 'react';
-import luteceImg from '../assets/lutece-hero.svg';
-import revolutionImg from '../assets/1789-revolution.svg';
-import tableImg from '../assets/table-paris.svg';
+// Imgur images for better visual experience
+const luteceImg = 'https://i.imgur.com/1uLhXial.jpeg';
+const revolutionImg = 'https://i.imgur.com/iyCcmoSl.jpeg';
+const tableImg = 'https://i.imgur.com/VtWPT2Ml.jpeg';
 
 interface QuetesV1Props {
   onSelectQuete: (queteId: string) => void;
