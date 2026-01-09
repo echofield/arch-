@@ -55,6 +55,9 @@
     build: {
       target: 'esnext',
       outDir: 'dist',
+      assetsDir: 'assets',
+      // Ensure SVG files are included
+      assetsInclude: ['**/*.svg'],
     },
     server: {
       port: 3000,
