@@ -9,7 +9,9 @@ import { useState } from 'react';
 const luteceImg = 'https://i.imgur.com/1uLhXial.jpeg';
 const revolutionImg = 'https://i.imgur.com/iyCcmoSl.jpeg';
 const tableImg = 'https://i.imgur.com/VtWPT2Ml.jpeg';
-const hunterImg = 'https://i.imgur.com/woVnvZ9h.jpeg'; // Placeholder - will update with Montmartre image
+// Montmartre images
+const hunterImg = 'https://i.imgur.com/onorBpE.jpeg'; // Cadran solaire / coq
+const montmartre2 = 'https://i.imgur.com/a2sZi1H.jpeg'; // Monument
 
 interface QueteDetailProps {
   queteId: string;
