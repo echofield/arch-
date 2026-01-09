@@ -1,5 +1,8 @@
 import { MamlukGrid } from './MamlukGrid';
 import { useState } from 'react';
+import luteceImg from '../assets/lutece-hero.svg';
+import revolutionImg from '../assets/1789-revolution.svg';
+import tableImg from '../assets/table-paris.svg';
 
 const QUETES = [
   {
@@ -8,7 +11,7 @@ const QUETES = [
     registre: 'Fondation · Geste · Mesure',
     extrait: 'Avant les palais, avant les façades, Paris fut une solution. Un endroit où l\'eau accepte d\'être franchie.',
     duree: '≈ 1h30–2h',
-    image: 'https://i.imgur.com/1uLhXia.jpeg'
+    image: luteceImg
   },
   {
     id: '1789',
@@ -16,7 +19,7 @@ const QUETES = [
     registre: 'Seuil · Révolution · Passage',
     extrait: 'Paris ne devient révolutionnaire que lorsqu\'il devient poreux. Un lieu où l\'on parle trop, où l\'on écoute trop.',
     duree: '≈ 2h–2h30',
-    image: 'https://i.imgur.com/iyCcmoS.jpeg'
+    image: revolutionImg
   },
   {
     id: 'table',
@@ -24,7 +27,7 @@ const QUETES = [
     registre: 'Nourriture · Corps · Ville vivante',
     extrait: 'Une ville se raconte par ce qu\'elle avale. Paris est une gorge : elle boit, elle stocke, elle taxe, elle revend.',
     duree: '≈ 2h30–3h',
-    image: 'https://i.imgur.com/VtWPT2M.jpeg'
+    image: tableImg
   }
 ];
 

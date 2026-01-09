@@ -3,6 +3,9 @@ import { BackButton } from './BackButton';
 import { ExternalLink, MapPin, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
+import luteceImg from '../assets/lutece-hero.svg';
+import revolutionImg from '../assets/1789-revolution.svg';
+import tableImg from '../assets/table-paris.svg';
 
 interface QueteDetailProps {
   queteId: string;
@@ -71,7 +74,7 @@ const QUETES_DATA: Record<string, QueteData> = {
         geste: 'Si tu entres, tu refermes la boucle. Ce lieu est construit sur des thermes romains. Les pierres que tu vois dans la cour ont chauffé des corps il y a deux mille ans. Au-dessus, un hôtel médiéval. La ville s\'empile sur elle-même. Tu ne visites pas un musée. Tu descends dans les couches. Geste — Si tu n\'entres pas, touche le mur extérieur. La pierre est romaine. Ta main touche ce que la ville a décidé de ne pas effacer.'
       }
     ],
-    image: 'https://i.imgur.com/1uLhXia.jpeg'
+    image: luteceImg
   },
   '1789': {
     id: '1789',
@@ -117,7 +120,7 @@ const QUETES_DATA: Record<string, QueteData> = {
         geste: 'Tu arrives sur la place. Elle est trop grande. C\'est fait exprès. Ici, le 21 janvier 1793, la décision est devenue irréversible. Une tête est tombée. Après ça, plus personne ne pouvait dire "on arrête, on revient en arrière". Le pays entier a basculé dans l\'inconnu. Tu n\'as pas besoin d\'imaginer la guillotine. Regarde l\'espace. Sens l\'exposition. Être ici, c\'était être vu par des milliers de personnes. Le pouvoir et la mort, même mise en scène. Geste — Traverse la place à pied. Ne contourne pas. Va jusqu\'à l\'obélisque, puis continue. La ville reprend après. La décision reste derrière toi.'
       }
     ],
-    image: 'https://i.imgur.com/iyCcmoS.jpeg'
+    image: revolutionImg
   },
   table: {
     id: 'table',
@@ -163,7 +166,7 @@ const QUETES_DATA: Record<string, QueteData> = {
         geste: 'Tu ne termines pas. Tu traverses. Ce passage est l\'un des plus hauts de Paris. Verrière, fer forgé, lumière. Il relie deux mondes : le quartier gourmand que tu quittes, et le Paris populaire de Strasbourg-Saint-Denis qui t\'attend. Un bon parcours ne se ferme pas. Il ouvre sur ce qui vient après. Traverse lentement. Regarde en l\'air. Puis sors de l\'autre côté et continue ta journée. La ville ne s\'arrête pas.'
       }
     ],
-    image: 'https://i.imgur.com/VtWPT2M.jpeg'
+    image: tableImg
   }
 };
 

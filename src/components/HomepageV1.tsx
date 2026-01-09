@@ -65,12 +65,14 @@ export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onE
         >
           {/* Image Hero — Full Cover */}
           <img 
-            src="https://i.imgur.com/woVnvZ9.jpeg" 
+            src={luteceHero} 
             alt="Paris — Geste fondateur"
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover'
+              objectFit: 'contain',
+              opacity: 0.85,
+              padding: 'var(--space-xl)'
             }}
           />
         </div>

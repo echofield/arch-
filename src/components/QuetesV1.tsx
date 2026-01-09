@@ -1,6 +1,9 @@
 import { MamlukGrid } from './MamlukGrid';
 import { BackButton } from './BackButton';
 import { useState } from 'react';
+import luteceImg from '../assets/lutece-hero.svg';
+import revolutionImg from '../assets/1789-revolution.svg';
+import tableImg from '../assets/table-paris.svg';
 
 interface QuetesV1Props {
   onSelectQuete: (queteId: string) => void;
@@ -24,7 +27,7 @@ const QUETES: QueteCard[] = [
     registre: 'FONDATION · GESTE · MESURE',
     theme: 'Paris commence comme un passage : une île, un pont, un axe.',
     shortDescription: 'Avant les palais, avant les façades, Paris fut une solution. Un endroit où l\'eau accepte d\'être franchie.',
-    image: 'https://i.imgur.com/1uLhXia.jpeg',
+    image: luteceImg,
     duree: '≈ 1h30–2h'
   },
   {
@@ -33,7 +36,7 @@ const QUETES: QueteCard[] = [
     registre: 'SEUIL · RÉVOLUTION · PASSAGE',
     theme: 'La Révolution n\'est pas une idée : c\'est une trajectoire.',
     shortDescription: 'Paris ne devient révolutionnaire que lorsqu\'il devient poreux. Un lieu où l\'on parle trop, où l\'on écoute trop.',
-    image: 'https://i.imgur.com/iyCcmoS.jpeg',
+    image: revolutionImg,
     duree: '≈ 2h–2h30'
   },
   {
@@ -42,7 +45,7 @@ const QUETES: QueteCard[] = [
     registre: 'NOURRITURE · CORPS · VILLE VIVANTE',
     theme: 'Une ville mange, boit, respire.',
     shortDescription: 'Une ville se raconte par ce qu\'elle avale. Paris est une gorge, un ventre, une bouche. Elle a toujours eu faim. Elle a toujours eu soif.',
-    image: 'https://i.imgur.com/VtWPT2M.jpeg',
+    image: tableImg,
     duree: '≈ 2h30–3h'
   }
 ];
