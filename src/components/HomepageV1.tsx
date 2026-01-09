@@ -71,9 +71,9 @@ export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onE
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
-              opacity: 0.85,
-              padding: 'var(--space-xl)'
+              objectFit: 'cover'
+              
+              
             }}
           />
         </div>
