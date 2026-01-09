@@ -5,69 +5,78 @@ import { QueteDetail } from './components/QueteDetail';
 import { OrigineMap } from './components/OrigineMap';
 import { HistoireArchives } from './components/HistoireArchives';
 import { CarnetParisien } from './components/CarnetParisien';
-import { runMigration } from './utils/migrate-database';
+import { CardEntry } from './components/CardEntry';
+import { initializeCard, activateCard, type CardStatus } from './utils/card-service';
 
 type Screen = 'homepage' | 'origine' | 'quetes' | 'histoire' | 'detail' | 'carnet';
+type AppState = 'loading' | 'no_card' | 'validating' | 'invalid' | 'welcome' | 'ready';
 
 /**
  * APP V1 — ARCHÉ
- * 
- * Architecture multi-tenant via card_id :
- * - Chaque carte physique a un QR unique : ?card=LUT-2847
- * - Le card_id est lu depuis l'URL et stocké
- * - TOUTES les données sont filtrées par card_id
- * - Isolation totale entre les cartes
- * 
- * Écrans :
- * 1. Homepage — Monument d'entrée
- * 2. Origine — Carte révélation progressive
- * 3. Quêtes — 3 portes (Lutèce / 1789 / Table)
- * 4. Histoire — Archives éditoriales
- * 5. Détail — Texte long + Google Maps
- * 6. Carnet — Journal intime parisien
+ *
+ * Architecture:
+ * - Each physical card has a unique QR: ?card=PS-0001
+ * - Card is validated via Supabase, then stored locally
+ * - First scan = activation (single use)
+ * - Same device can always return
+ * - Others can access but we track it
  */
 export default function App() {
+  const [appState, setAppState] = useState<AppState>('loading');
+  const [cardStatus, setCardStatus] = useState<CardStatus | null>(null);
   const [currentScreen, setCurrentScreen] = useState<Screen>('homepage');
   const [selectedQueteId, setSelectedQueteId] = useState<string | null>(null);
-  const [cardId, setCardId] = useState<string | null>(null);
 
-  // Lire card_id depuis URL au montage
+  // Initialize card on mount
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const cardFromUrl = urlParams.get('card');
-    
-    if (cardFromUrl) {
-      // Nouvelle carte scannée - stocker
-      console.log('🎫 Carte détectée:', cardFromUrl);
-      localStorage.setItem('arche_card_id', cardFromUrl);
-      setCardId(cardFromUrl);
-    } else {
-      // Pas de card dans URL - vérifier localStorage
-      const storedCard = localStorage.getItem('arche_card_id');
-      if (storedCard) {
-        console.log('🎫 Carte en mémoire:', storedCard);
-        setCardId(storedCard);
+    async function init() {
+      const status = await initializeCard();
+
+      if (!status) {
+        setAppState('no_card');
+        return;
+      }
+
+      setCardStatus(status);
+
+      if (status.valid) {
+        setAppState('welcome');
+        setTimeout(() => setAppState('ready'), 1500);
       } else {
-        // Mode démo pour développement
-        console.log('⚠️ Aucune carte - Mode démo avec DEMO-0001');
-        const demoCard = 'DEMO-0001';
-        localStorage.setItem('arche_card_id', demoCard);
-        setCardId(demoCard);
+        setAppState('invalid');
       }
     }
+
+    init();
   }, []);
 
-  // Gérer le routing via hash URL
+  // Handle manual card entry
+  const handleManualEntry = async (code: string) => {
+    setAppState('validating');
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('card', code);
+    window.history.replaceState({}, '', url.toString());
+
+    const status = await activateCard(code);
+    setCardStatus(status);
+
+    if (status.valid) {
+      setAppState('welcome');
+      setTimeout(() => setAppState('ready'), 1500);
+    } else {
+      setAppState('invalid');
+    }
+  };
+
+  // Handle hash-based routing
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
-      
+
       if (!hash) {
         setCurrentScreen('homepage');
-        return;
-      }
-      
-      if (hash === 'origine') {
+      } else if (hash === 'origine') {
         setCurrentScreen('origine');
       } else if (hash === 'histoire') {
         setCurrentScreen('histoire');
@@ -76,20 +85,18 @@ export default function App() {
       } else if (hash === 'quetes') {
         setCurrentScreen('quetes');
       } else if (hash.startsWith('quete/')) {
-        const queteId = hash.split('/')[1];
-        setSelectedQueteId(queteId);
+        setSelectedQueteId(hash.split('/')[1]);
         setCurrentScreen('detail');
       } else {
         setCurrentScreen('homepage');
       }
     };
-    
+
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
-    
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
-  
+
   const navigateTo = (screen: Screen, queteId?: string) => {
     if (screen === 'homepage') {
       window.location.hash = '';
@@ -100,88 +107,53 @@ export default function App() {
     }
   };
 
-  // Attendre que le cardId soit chargé
-  if (!cardId) {
+  // Card entry/validation states
+  if (appState !== 'ready') {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        background: '#FAF8F2',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'var(--font-serif)',
-        fontSize: '14px',
-        fontStyle: 'italic',
-        color: '#1A1A1A',
-        opacity: 0.3
-      }}>
-        Chargement...
-      </div>
+      <CardEntry
+        status={appState}
+        cardStatus={cardStatus || undefined}
+        onManualEntry={handleManualEntry}
+        onContinue={() => setAppState('ready')}
+      />
     );
   }
 
+  // Main app
   const renderScreen = () => {
     switch (currentScreen) {
       case 'homepage':
         return (
-          <HomepageV1 
+          <HomepageV1
             onEnterQuetes={() => navigateTo('quetes')}
             onEnterOrigine={() => navigateTo('origine')}
             onEnterHistoire={() => navigateTo('histoire')}
             onEnterCarnet={() => navigateTo('carnet')}
           />
         );
-
       case 'origine':
-        return (
-          <OrigineMap 
-            onBack={() => navigateTo('homepage')}
-          />
-        );
-
+        return <OrigineMap onBack={() => navigateTo('homepage')} />;
       case 'histoire':
-        return (
-          <HistoireArchives 
-            onBack={() => navigateTo('homepage')}
-          />
-        );
-
+        return <HistoireArchives onBack={() => navigateTo('homepage')} />;
       case 'quetes':
         return (
-          <QuetesV1 
+          <QuetesV1
             onBack={() => navigateTo('homepage')}
-            onSelectQuete={(queteId) => navigateTo('detail', queteId)}
+            onSelectQuete={(id) => navigateTo('detail', id)}
           />
         );
-
       case 'detail':
         if (!selectedQueteId) {
           navigateTo('quetes');
           return null;
         }
-        return (
-          <QueteDetail 
-            queteId={selectedQueteId}
-            onBack={() => navigateTo('quetes')}
-          />
-        );
-
+        return <QueteDetail queteId={selectedQueteId} onBack={() => navigateTo('quetes')} />;
       case 'carnet':
-        return (
-          <CarnetParisien 
-            cardId={cardId}
-            onBack={() => navigateTo('homepage')}
-          />
-        );
-
+        return <CarnetParisien cardId={cardStatus?.cardId || 'unknown'} onBack={() => navigateTo('homepage')} />;
       default:
         return null;
     }
   };
 
-  return (
-    <div style={{ minHeight: '100vh', background: '#FAF8F2' }}>
-      {renderScreen()}
-    </div>
-  );
+  return <div style={{ minHeight: '100vh', background: '#FAF8F2' }}>{renderScreen()}</div>;
 }
