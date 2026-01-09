@@ -32,11 +32,13 @@ export async function getTraces(
   limit: number = 3
 ): Promise<Trace[]> {
   try {
-    const { data, error } = await supabase.rpc('get_traces', {
-      p_quest_id: questId,
-      p_etape_id: etapeId,
-      p_limit: limit
-    });
+    const { data, error } = await supabase
+      .from('traces')
+      .select('content, card_id, created_at')
+      .eq('quest_id', questId)
+      .eq('etape_id', etapeId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
 
     if (error) {
       console.error('Error fetching traces:', error);
@@ -77,12 +79,31 @@ export async function leaveTrace(
   }
 
   try {
-    const { data, error } = await supabase.rpc('leave_trace', {
-      p_card_id: cardId,
-      p_quest_id: questId,
-      p_etape_id: etapeId,
-      p_content: trimmed
-    });
+    // Check if already left a trace
+    const { count } = await supabase
+      .from('traces')
+      .select('*', { count: 'exact', head: true })
+      .eq('card_id', cardId)
+      .eq('quest_id', questId)
+      .eq('etape_id', etapeId);
+
+    if (count && count > 0) {
+      return {
+        success: false,
+        message: 'Vous avez déjà laissé une trace ici.',
+        error: 'ALREADY_LEFT_TRACE'
+      };
+    }
+
+    // Insert the trace
+    const { error } = await supabase
+      .from('traces')
+      .insert({
+        card_id: cardId,
+        quest_id: questId,
+        etape_id: etapeId,
+        content: trimmed
+      });
 
     if (error) {
       console.error('Error leaving trace:', error);
@@ -93,7 +114,10 @@ export async function leaveTrace(
       };
     }
 
-    return data as TraceResult;
+    return {
+      success: true,
+      message: 'Trace laissée.'
+    };
   } catch (err) {
     console.error('Traces service error:', err);
     return {
