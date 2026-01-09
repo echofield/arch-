@@ -7,6 +7,7 @@ interface HomepageV1Props {
   onEnterOrigine?: () => void;
   onEnterHistoire?: () => void;
   onEnterCarnet?: () => void;
+  onEnterHunter?: () => void;
 }
 
 /**
@@ -23,7 +24,7 @@ interface HomepageV1Props {
  * 
  * L'interface doit pouvoir exister imprimée.
  */
-export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onEnterCarnet }: HomepageV1Props) {
+export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onEnterCarnet, onEnterHunter }: HomepageV1Props) {
   return (
     <div 
       className="min-h-screen relative flex items-center justify-center"
@@ -379,8 +380,46 @@ export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onE
         </button>
       </nav>
 
+      {/* Trésor Caché — Entrée mystérieuse pour Hunter */}
+      <button
+        onClick={onEnterHunter}
+        style={{
+          position: 'absolute',
+          bottom: 'var(--space-lg)',
+          left: 'var(--space-lg)',
+          background: 'transparent',
+          border: '1px dashed rgba(0, 61, 44, 0.2)',
+          padding: '12px 20px',
+          cursor: 'pointer',
+          transition: 'all 0.4s ease',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.5)';
+          e.currentTarget.style.background = 'rgba(0, 61, 44, 0.03)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.2)';
+          e.currentTarget.style.background = 'transparent';
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '14px',
+            fontStyle: 'italic',
+            color: '#003D2C',
+            opacity: 0.6
+          }}
+        >
+          ◇ Trésor caché
+        </span>
+      </button>
+
       {/* Signature discrète */}
-      <div 
+      <div
         style={{
           position: 'absolute',
           bottom: 'var(--space-lg)',

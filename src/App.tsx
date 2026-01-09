@@ -129,6 +129,7 @@ export default function App() {
             onEnterOrigine={() => navigateTo('origine')}
             onEnterHistoire={() => navigateTo('histoire')}
             onEnterCarnet={() => navigateTo('carnet')}
+            onEnterHunter={() => navigateTo('detail', 'hunter-montmartre')}
           />
         );
       case 'origine':

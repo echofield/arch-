@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCHÉ — Cartes à Imprimer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #FAF8F2;
+      color: #1A1A1A;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      padding: 20mm;
+      background: #FAF8F2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      page-break-after: always;
+    }
+
+    .card {
+      width: 85mm;
+      height: 125mm;
+      background: #FAF8F2;
+      border: 1px solid rgba(0, 61, 44, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12mm 10mm;
+      margin: 5mm;
+    }
+
+    .card-header {
+      text-align: center;
+    }
+
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24pt;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: #003D2C;
+      margin-bottom: 3mm;
+    }
+
+    .card-body {
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .manifesto {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11pt;
+      font-style: italic;
+      line-height: 1.7;
+      color: #1A1A1A;
+      margin-bottom: 6mm;
+    }
+
+    .manifesto .emphasis {
+      display: block;
+      font-size: 13pt;
+      font-weight: 600;
+      font-style: normal;
+      margin-bottom: 4mm;
+      color: #003D2C;
+    }
+
+    .instruction {
+      font-family: 'Inter', sans-serif;
+      font-size: 7pt;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #1A1A1A;
+      opacity: 0.5;
+      margin-top: 4mm;
+    }
+
+    .card-footer {
+      text-align: center;
+    }
+
+    .qr-placeholder {
+      width: 25mm;
+      height: 25mm;
+      margin: 0 auto 3mm;
+      background: #003D2C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-placeholder img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .card-id {
+      font-family: 'Inter', sans-serif;
+      font-size: 7pt;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: #003D2C;
+      opacity: 0.6;
+    }
+
+    /* Grid layout for 3 cards */
+    .cards-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 5mm;
+    }
+
+    /* Instructions page */
+    .instructions {
+      font-family: 'Inter', sans-serif;
+      font-size: 9pt;
+      line-height: 1.8;
+      color: #1A1A1A;
+      max-width: 140mm;
+      text-align: left;
+    }
+
+    .instructions h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28pt;
+      font-weight: 400;
+      color: #003D2C;
+      margin-bottom: 10mm;
+      text-align: center;
+      letter-spacing: 0.1em;
+    }
+
+    .instructions h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12pt;
+      font-weight: 600;
+      color: #003D2C;
+      margin: 8mm 0 3mm;
+    }
+
+    .instructions p {
+      margin-bottom: 4mm;
+    }
+
+    .instructions ul {
+      margin-left: 5mm;
+      margin-bottom: 4mm;
+    }
+
+    .instructions li {
+      margin-bottom: 2mm;
+    }
+
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page 1: Instructions -->
+  <div class="page">
+    <div class="instructions">
+      <h1>ARCHÉ</h1>
+
+      <h2>Ce que vous tenez</h2>
+      <p>Une carte. Pas un ticket. Pas un code promotionnel. Une clé.</p>
+      <p>Le QR code au dos ouvre une expérience de marche dans Paris. Trois quêtes. Sept symboles à chasser. Des traces laissées par d'autres marcheurs.</p>
+
+      <h2>Comment imprimer</h2>
+      <ul>
+        <li>Papier recommandé : 300gsm, ivoire ou blanc cassé</li>
+        <li>Découper selon les lignes</li>
+        <li>Plier si format double face</li>
+      </ul>
+
+      <h2>Philosophie</h2>
+      <p>ARCHÉ n'optimise pas l'engagement. Il enregistre le passage.</p>
+      <p>Une carte = une personne = une trace unique dans la ville.</p>
+
+      <h2>Les cartes suivantes</h2>
+      <p>PS-0001, PS-0002, PS-0003</p>
+      <p>Chaque carte est unique. Une fois activée, elle appartient à son marcheur.</p>
+    </div>
+  </div>
+
+  <!-- Page 2: Cards -->
+  <div class="page">
+    <div class="cards-grid">
+
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="brand">ARCHÉ</div>
+        </div>
+        <div class="card-body">
+          <div class="manifesto">
+            <span class="emphasis">Paris ne se visite pas.</span>
+            <span class="emphasis">Paris se traverse.</span>
+            Entrez. Marchez. Regardez autrement.
+          </div>
+          <div class="instruction">Scannez pour commencer</div>
+        </div>
+        <div class="card-footer">
+          <div class="qr-placeholder">
+            <img src="PS-0001.svg" alt="QR PS-0001">
+          </div>
+          <div class="card-id">PS-0001</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="brand">ARCHÉ</div>
+        </div>
+        <div class="card-body">
+          <div class="manifesto">
+            <span class="emphasis">Paris ne se visite pas.</span>
+            <span class="emphasis">Paris se traverse.</span>
+            Entrez. Marchez. Regardez autrement.
+          </div>
+          <div class="instruction">Scannez pour commencer</div>
+        </div>
+        <div class="card-footer">
+          <div class="qr-placeholder">
+            <img src="PS-0002.svg" alt="QR PS-0002">
+          </div>
+          <div class="card-id">PS-0002</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="brand">ARCHÉ</div>
+        </div>
+        <div class="card-body">
+          <div class="manifesto">
+            <span class="emphasis">Paris ne se visite pas.</span>
+            <span class="emphasis">Paris se traverse.</span>
+            Entrez. Marchez. Regardez autrement.
+          </div>
+          <div class="instruction">Scannez pour commencer</div>
+        </div>
+        <div class="card-footer">
+          <div class="qr-placeholder">
+            <img src="PS-0003.svg" alt="QR PS-0003">
+          </div>
+          <div class="card-id">PS-0003</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

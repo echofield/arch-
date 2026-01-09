@@ -183,6 +183,27 @@ const GEMINI_ENRICHMENT: Record<string, Omit<EnrichedQuest, keyof Quest>> = {
       pace: "MODÉRÉ"
     },
     archetype: "Liberté"
+  },
+
+  // ============================================
+  // HUNTER: MONTMARTRE — Chasse aux symboles
+  // ============================================
+
+  'hunter-montmartre': {
+    poeticSubtitle: "Sept symboles. Une colline. Apprendre à voir.",
+    curatedDescription: "Hunter n'est pas une promenade. C'est une méthode. Montmartre est un organisme vivant, cicatrisé par les siècles — du gypse antique aux cabarets de la Belle Époque. Chaque strate laisse une empreinte pour qui sait la lire. Cette chasse vous invite à reconnaître sept symboles dispersés sur la Butte : un homme figé dans la pierre, un rocher maudit, une plaque britannique au cœur de Paris, un cadran solaire crypté, un moulin fantôme, la tombe d'un maître des chats, et le mensonge fondateur d'un mot que vous utilisez chaque jour. Il n'y a pas de séquence. Pas de carte à suivre. Juste des indices. Quand tu le vois, tu sais.",
+    quote: {
+      text: "Le passant qui lève les yeux vers le ciel ne voit pas les pierres du chemin. Mais c'est dans les pierres que se cache l'histoire.",
+      author: "Proverbe montmartrois"
+    },
+    miniQuest: "Trouve l'homme dont la main gauche est d'or. Serre-la. Tu fais désormais partie de la chaîne.",
+    tags: ["extérieur", "mystère", "historique", "contemplatif", "gratuit", "symboles", "chasse"],
+    badges: {
+      cost: "GRATUIT",
+      environment: "EXTÉRIEUR",
+      pace: "CONTEMPLATIF"
+    },
+    archetype: "Reconnaissance"
   }
 };
 

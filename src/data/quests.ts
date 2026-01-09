@@ -369,6 +369,70 @@ export const QUESTS_DATA: Quest[] = [
     gmapsDirectionsUrl: 'https://www.google.com/maps/dir/?api=1&origin=48.8525,2.3799&destination=48.8504,2.3788&waypoints=48.8471,2.3765&travelmode=walking',
     estimatedTime: '2h00',
     distance: '~2.5 km'
+  },
+
+  // ============================================
+  // HUNTER: MONTMARTRE — Chasse aux symboles
+  // ============================================
+
+  {
+    id: 'hunter-montmartre',
+    title: 'Hunter: Montmartre',
+    subtitle: 'Chasse aux symboles de la Butte',
+    nodes: [
+      {
+        id: 'passe-muraille',
+        name: 'Le Passe-Muraille',
+        address: 'Place Marcel Aymé, 75018',
+        coordinates: { lat: 48.8878, lng: 2.3367 },
+        order: 1
+      },
+      {
+        id: 'rocher-sorciere',
+        name: 'Le Rocher de la Sorcière',
+        address: 'Passage de la Sorcière, 75018',
+        coordinates: { lat: 48.8885, lng: 2.3335 },
+        order: 2
+      },
+      {
+        id: 'downing-street',
+        name: 'La Plaque Downing Street',
+        address: '10 Villa Léandre, 75018',
+        coordinates: { lat: 48.8883, lng: 2.3328 },
+        order: 3
+      },
+      {
+        id: 'cadran-coq',
+        name: 'Le Cadran du Coq',
+        address: '4 Rue de l\'Abreuvoir, 75018',
+        coordinates: { lat: 48.8869, lng: 2.3392 },
+        order: 4
+      },
+      {
+        id: 'moulin-radet',
+        name: 'Le Moulin Radet',
+        address: '83 Rue Lepic, 75018',
+        coordinates: { lat: 48.8867, lng: 2.3347 },
+        order: 5
+      },
+      {
+        id: 'tombe-steinlen',
+        name: 'La Tombe de Steinlen',
+        address: 'Cimetière Saint-Vincent, 75018',
+        coordinates: { lat: 48.8914, lng: 2.3402 },
+        order: 6
+      },
+      {
+        id: 'plaque-bistro',
+        name: 'La Plaque du Bistro',
+        address: '6 Place du Tertre, 75018',
+        coordinates: { lat: 48.8863, lng: 2.3408 },
+        order: 7
+      }
+    ],
+    gmapsDirectionsUrl: 'https://www.google.com/maps/search/?api=1&query=Place+du+Tertre+Paris',
+    estimatedTime: '2h — 3h',
+    distance: 'Constellation'
   }
 ];
 

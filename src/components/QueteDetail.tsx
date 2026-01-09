@@ -9,6 +9,7 @@ import { useState } from 'react';
 const luteceImg = 'https://i.imgur.com/1uLhXial.jpeg';
 const revolutionImg = 'https://i.imgur.com/iyCcmoSl.jpeg';
 const tableImg = 'https://i.imgur.com/VtWPT2Ml.jpeg';
+const hunterImg = 'https://i.imgur.com/woVnvZ9h.jpeg'; // Placeholder - will update with Montmartre image
 
 interface QueteDetailProps {
   queteId: string;
@@ -170,6 +171,62 @@ const QUETES_DATA: Record<string, QueteData> = {
       }
     ],
     image: tableImg
+  },
+
+  // ============================================
+  // HUNTER: MONTMARTRE — Chasse aux symboles
+  // ============================================
+
+  'hunter-montmartre': {
+    id: 'hunter-montmartre',
+    title: 'HUNTER: MONTMARTRE',
+    registre: 'Reconnaissance · Symbole · Mémoire',
+    texte: [
+      'Hunter n\'est pas une promenade. C\'est une méthode.',
+      'Montmartre est un organisme cicatrisé. Du gypse antique aux cabarets de la Belle Époque, chaque strate laisse une empreinte pour qui sait la lire. Cette chasse t\'invite à reconnaître sept symboles dispersés sur la Butte.',
+      'Il n\'y a pas de séquence. Pas de carte à suivre. Juste des indices. Les symboles sont là, exposés à des milliers de passants chaque jour. Mais ils sont occultés par l\'habitude. Ils nécessitent un changement de focale.',
+      'Quand tu le vois, tu sais.'
+    ],
+    duree: '2h — 3h (constellation)',
+    itineraireComplet: 'https://www.google.com/maps/search/?api=1&query=Place+du+Tertre+Paris+18',
+    stops: [
+      {
+        name: 'α — Le Passe-Muraille',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Place+Marcel+Aymé+Paris',
+        geste: 'Cherche l\'homme qui a ignoré les lois de la physique. Il habite une place qui porte le nom de son visage, mais son corps est celui d\'un autre. Il est à jamais coincé entre deux mondes, victime d\'une médecine tardive. Regarde sa main gauche : elle est d\'or, polie par la compassion de ceux qui sont libres de marcher dans la rue. Quand tu verras l\'éclat du métal usé sur la pierre froide, tu sauras que tu as trouvé le prisonnier volontaire. — Serre sa main. Tu fais partie de la chaîne.'
+      },
+      {
+        name: 'β — Le Rocher de la Sorcière',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=23+Avenue+Junot+Paris',
+        geste: 'Tu trouveras une frontière de fer noir entre le monde d\'en haut et le monde d\'en bas. Colle ton visage aux barreaux. Au cœur de l\'allée interdite, cherche l\'intrus. Ce n\'est pas une sculpture, ni un banc, mais une pierre brute, solitaire, que la ville n\'a pas osé avaler. Elle marquait l\'eau, elle porte aujourd\'hui le nom d\'un maléfice. C\'est le dernier rempart du Maquis contre le béton. Quand tu verras ce dolmen urbain, tu sauras que la Sorcière veille encore.'
+      },
+      {
+        name: 'γ — La Plaque Downing Street',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=10+Villa+Léandre+Paris',
+        geste: 'Oublie Paris. Traverse la Manche sans quitter le pavé. Cherche l\'impasse où les briques rougissent et où les fenêtres s\'avancent sur la rue pour mieux voir. Arrête-toi au numéro du pouvoir. Une petite plaque noire te ment avec une élégance britannique. Ce n\'est pas la porte d\'un Premier Ministre, mais la blague d\'un résident qui a transformé sa maison en décor de théâtre. Quand tu liras l\'adresse impossible, tu sauras que tu es arrivé à Londres-sur-Montmartre.'
+      },
+      {
+        name: 'δ — Le Cadran du Coq',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=4+Rue+de+l\'Abreuvoir+Paris',
+        geste: 'Marche sur le chemin où les bêtes allaient boire. Arrête-toi devant la maison de l\'historien soldat. Sur le mur, un oiseau de pierre attend le soleil pour crier. Lis sa promesse. Une lettre s\'est retournée, comme une armée en retraite dans les neiges de l\'Est. Ce « N » à l\'envers est la signature secrète d\'un désastre lointain. Quand tu auras décrypté l\'erreur, tu entendras l\'écho de l\'Empire. — QUAND SONNERA JE CHANTERAY.'
+      },
+      {
+        name: 'ε — Le Moulin Radet',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=83+Rue+Lepic+Paris',
+        geste: 'Il a perdu ses racines et ne moud plus que du vent. Perché sur un toit comme un trophée oublié, il surveille le virage. Ses ailes ont, dit-on, porté le corps écartelé de son maître en 1814, cloué là par les lances cosaques. Aujourd\'hui, il est muet, coque de bois vide posée sur un restaurant. Lève la tête pour saluer le vétéran qui ne tourne plus.'
+      },
+      {
+        name: 'ζ — La Tombe de Steinlen',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cimetière+Saint-Vincent+Paris',
+        geste: 'Descends vers le repos des artistes, là où les murs étouffent le bruit de la ville. Cherche la pierre brute qui refuse le marbre lisse. C\'est le sanctuaire de l\'Indépendance. Si tu vois une armée de petits félins de pierre, de verre ou de chair monter la garde sur la dalle, tu as trouvé le maître du Chat Noir. Il a dessiné le peuple de la nuit, et le peuple de la nuit lui rend hommage.'
+      },
+      {
+        name: 'Ω — La Plaque du Bistro',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=6+Place+du+Tertre+Paris',
+        geste: 'Retourne au centre du tourbillon. Cherche la plus vieille maison de soif, celle de la Mère fondatrice. Sur son mur, une plaque officielle raconte un mensonge que tout le monde adore croire. Elle parle de soldats venus du froid en 1814, criant « Vite ! Vite ! » dans une langue étrangère. C\'est la naissance légendaire d\'un mot que tu utilises tous les jours. Lis le mot russe gravé dans le laiton : c\'est la cicatrice joyeuse d\'une invasion oubliée. — Le mensonge est devenu vérité. La vérité est devenue folklore.'
+      }
+    ],
+    image: hunterImg
   }
 };
 
