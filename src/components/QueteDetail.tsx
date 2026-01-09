@@ -12,6 +12,7 @@ const tableImg = 'https://i.imgur.com/VtWPT2Ml.jpeg';
 // Montmartre images
 const hunterImg = 'https://i.imgur.com/onorBpE.jpeg'; // Cadran solaire / coq
 const montmartre2 = 'https://i.imgur.com/a2sZi1H.jpeg'; // Monument
+const montmartre3 = 'https://i.imgur.com/NeCkJRp.jpeg'; // Maison verte
 
 interface QueteDetailProps {
   queteId: string;
