@@ -1,8 +1,9 @@
 import { MamlukGrid } from './MamlukGrid';
 import { useState } from 'react';
-import luteceImg from '../assets/lutece-hero.svg';
-import revolutionImg from '../assets/1789-revolution.svg';
-import tableImg from '../assets/table-paris.svg';
+// Imgur images for better visual experience
+const luteceImg = 'https://i.imgur.com/1uLhXia.jpeg';
+const revolutionImg = 'https://i.imgur.com/iyCcmoS.jpeg';
+const tableImg = 'https://i.imgur.com/VtWPT2M.jpeg';
 
 const QUETES = [
   {
