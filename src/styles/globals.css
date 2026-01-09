@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* PETIT SOUVENIR — Luxury Color Palette */
+    --paper: #FAF8F2;
+    --ink: #1A1A1A;
+    --green: #003D2C;
+    --gold: #A38767;
+    --grey-light: #E8E5DE;
+    --grey-medium: #C8C4BA;
+
+    /* Typography — Old Paris Editorial */
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* Editorial Spacing — Museum-grade */
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 40px;
+    --space-xl: 64px;
+    --space-xxl: 96px;
+
+    /* Ultralight Shadows — Nearly Invisible */
+    --shadow-sm: 0 1px 3px rgba(26, 26, 26, 0.03);
+    --shadow-md: 0 2px 8px rgba(26, 26, 26, 0.04);
+    --shadow-lg: 0 4px 16px rgba(26, 26, 26, 0.05);
+
+    /* Fine Borders — Carte Postale Inspired */
+    --border-thin: 0.5px;
+    --border-medium: 0.75px;
+
+    /* Transitions — Soft, Refined */
+    --transition: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--ink);
+    background-color: var(--paper);
+  }
+
+  /* Typography Scale — Lightly Condensed, Elegant */
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  h3 {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+
+  h4 {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+
+  p {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  /* Small Caps — Inter */
+  .small-caps {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: 0.6;
+  }
+
+  /* Narrator Voice */
+  .narrator {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+    opacity: 0.9;
+  }
+
+  button {
+    font-family: var(--font-sans);
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+
+  input, textarea {
+    font-family: var(--font-sans);
+  }
+
+  /* Selection Color */
+  ::selection {
+    background: var(--green);
+    color: var(--paper);
+  }
+}
+
+/* RESPONSIVE MOBILE — Optimisation pour téléphones */
+@media (max-width: 768px) {
+  :root {
+    --space-xs: 6px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-xxl: 48px;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  /* Navigation mobile */
+  nav {
+    gap: 12px !important;
+    font-size: 9px !important;
+  }
+
+  /* Boutons fixes repositionnés */
+  button[style*="position: fixed"] {
+    top: var(--space-md) !important;
+    left: var(--space-md) !important;
+  }
+
+  .homepage-image {
+    display: none !important;
+  }
+}
+
+/* TABLETTE */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .quetes-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* PRINT STYLES — Export PDF du Carnet Parisien */
+@media print {
+  /* MASQUER ABSOLUMENT TOUT CE QUI N'EST PAS CONTENU */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* MASQUER LES URLS — CRITIQUE */
+  a[href]:after {
+    content: "" !important;
+    display: none !important;
+  }
+  
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+  
+  /* Masquer iframes complètement */
+  iframe {
+    display: none !important;
+  }
+  
+  /* Cache tous les éléments UI */
+  .no-print,
+  .notebook-lines,
+  .margin-line,
+  button,
+  input,
+  textarea,
+  nav,
+  header:not(.carnet-header) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Reset page */
+  @page {
+    margin: 2cm;
+    size: A4 portrait;
+  }
+  
+  /* Désactiver les en-têtes et pieds de page par défaut du navigateur */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  @page {
+    margin-top: 1.5cm;
+    margin-bottom: 1.5cm;
+    margin-left: 2cm;
+    margin-right: 2cm;
+  }
+
+  body {
+    background: white;
+    color: #1A1A1A;
+  }
+
+  .carnet-container {
+    background: white !important;
+  }
+
+  /* Titre du document */
+  h1 {
+    font-size: 32px;
+    margin-bottom: 24px;
+    page-break-after: avoid;
+  }
+
+  /* Souvenirs — Formatage propre pour l'impression */
+  div[style*="marginBottom: '48px'"] {
+    page-break-inside: avoid;
+    margin-bottom: 32px !important;
+    padding-bottom: 32px !important;
+  }
+
+  /* Éviter les coupures de page malheureuses */
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Typographie imprimée — Plus serrée */
+  p[style*="fontSize: '16px'"] {
+    font-size: 13pt !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Dates et lieux — Plus discrets */
+  div[style*="fontSize: '9px'"],
+  div[style*="fontSize: '13px'"] {
+    font-size: 9pt !important;
+    opacity: 0.6 !important;
+  }
+
+  /* Ajout du titre du document en haut de la première page */
+  .carnet-container::before {
+    content: "PETIT SOUVENIR — Carnet Parisien";
+    display: block;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18pt;
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #D4CFC5;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  /* Numéros de page */
+  @page {
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Inter', sans-serif;
+      font-size: 9pt;
+      color: #1A1A1A;
+      opacity: 0.4;
+    }
+  }
+}

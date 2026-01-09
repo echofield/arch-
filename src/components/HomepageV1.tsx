@@ -1,0 +1,433 @@
+import { MamlukGrid } from './MamlukGrid';
+import luteceHero from '../assets/lutece-hero.svg';
+
+interface HomepageV1Props {
+  onEnterQuetes: () => void;
+  onEnterOrigine?: () => void;
+  onEnterHistoire?: () => void;
+  onEnterCarnet?: () => void;
+}
+
+/**
+ * HOMEPAGE V1 — LE GRAND HÔTEL
+ * 
+ * Seuil symbolique.
+ * Pas de fonctionnalités, juste une entrée.
+ * 
+ * Structure :
+ * - 1 image éditoriale forte (format vertical, type gravure)
+ * - Titre : Le Grand Hôtel
+ * - Phrase de seuil : Votre Paris commence ici.
+ * - 1 CTA : Découvrir mon Paris
+ * 
+ * L'interface doit pouvoir exister imprimée.
+ */
+export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onEnterCarnet }: HomepageV1Props) {
+  return (
+    <div 
+      className="min-h-screen relative flex items-center justify-center"
+      style={{ 
+        background: '#FAF8F2',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Ghost Grid Mamluk — Très subtile */}
+      <MamlukGrid pattern="star8" opacity={0.02} scale={1.5} rotation={0} layers={2} />
+
+      {/* Container principal */}
+      <div 
+        style={{
+          maxWidth: '1200px',
+          width: '100%',
+          padding: 'clamp(24px, 5vw, 80px)',
+          position: 'relative',
+          zIndex: 10,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))',
+          gap: 'clamp(32px, 5vw, 80px)',
+          alignItems: 'center'
+        }}
+        className="homepage-container"
+      >
+        {/* COLONNE GAUCHE — IMAGE ÉDITORIALE (cachée sur mobile) */}
+        <div 
+          style={{
+            position: 'relative',
+            aspectRatio: '3 / 4',
+            background: '#E7E1D8',
+            border: '1px solid #DBD4C6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden'
+          }}
+          className="homepage-image"
+        >
+          {/* Image Hero — Full Cover */}
+          <img 
+            src="https://i.imgur.com/woVnvZ9.jpeg" 
+            alt="Paris — Geste fondateur"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+          />
+        </div>
+
+        {/* COLONNE DROITE — TEXTE & CTA */}
+        <div>
+          {/* Titre monumental */}
+          <h1 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: 'clamp(48px, 8vw, 96px)',
+              fontWeight: '400',
+              color: '#1A1A1A',
+              marginBottom: 'var(--space-lg)',
+              letterSpacing: '0.05em',
+              lineHeight: '1'
+            }}
+          >
+            ARCHÉ
+          </h1>
+
+          {/* Phrase de seuil */}
+          <p 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: 'clamp(18px, 2.5vw, 24px)',
+              fontStyle: 'italic',
+              color: '#1A1A1A',
+              opacity: 0.7,
+              marginBottom: 'var(--space-xxl)',
+              lineHeight: '1.6',
+              maxWidth: '400px'
+            }}
+          >
+            Votre Paris commence ici.
+          </p>
+
+          {/* CTA principal */}
+          <button
+            onClick={onEnterQuetes}
+            style={{
+              background: '#003D2C',
+              color: '#FAF8F2',
+              border: 'none',
+              padding: '20px 48px',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '13px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              transition: 'all var(--transition)',
+              fontWeight: '500'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#00543D';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 61, 44, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#003D2C';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            Découvrir mon Paris
+          </button>
+
+          {/* Ligne optionnelle discrète */}
+          <p 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '14px',
+              color: '#1A1A1A',
+              opacity: 0.4,
+              marginTop: '24px',
+              marginBottom: '48px',
+              fontStyle: 'italic',
+              fontWeight: '400'
+            }}
+          >
+            Trois manières de traverser Paris.
+          </p>
+
+          {/* 3 CARTES ÉDITORIALES — Secondaires, silencieuses */}
+          <div 
+            style={{
+              display: 'flex',
+              gap: '16px',
+              marginTop: '48px'
+            }}
+          >
+            {/* Carte 1 — ORIGINE */}
+            <button
+              onClick={onEnterOrigine}
+              style={{
+                flex: 1,
+                background: 'transparent',
+                border: '0.5px solid rgba(0, 61, 44, 0.15)',
+                padding: '24px 16px',
+                cursor: 'pointer',
+                transition: 'all var(--transition)',
+                textAlign: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 61, 44, 0.02)';
+                e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.15)';
+              }}
+            >
+              <p 
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#1A1A1A',
+                  marginBottom: '8px'
+                }}
+              >
+                Origine
+              </p>
+              <p 
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '9px',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: '#003D2C',
+                  opacity: 0.5
+                }}
+              >
+                Manifeste · Geste · Fondation
+              </p>
+            </button>
+
+            {/* Carte 2 — QUÊTES */}
+            <button
+              onClick={onEnterQuetes}
+              style={{
+                flex: 1,
+                background: 'transparent',
+                border: '0.5px solid rgba(0, 61, 44, 0.15)',
+                padding: '24px 16px',
+                cursor: 'pointer',
+                transition: 'all var(--transition)',
+                textAlign: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 61, 44, 0.02)';
+                e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.15)';
+              }}
+            >
+              <p 
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#1A1A1A',
+                  marginBottom: '8px'
+                }}
+              >
+                Quêtes
+              </p>
+              <p 
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '9px',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: '#003D2C',
+                  opacity: 0.5
+                }}
+              >
+                Lutèce · 1789 · Table
+              </p>
+            </button>
+
+            {/* Carte 3 — HISTOIRE */}
+            <button
+              onClick={onEnterHistoire}
+              style={{
+                flex: 1,
+                background: 'transparent',
+                border: '0.5px solid rgba(0, 61, 44, 0.15)',
+                padding: '24px 16px',
+                cursor: 'pointer',
+                transition: 'all var(--transition)',
+                textAlign: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 61, 44, 0.02)';
+                e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(0, 61, 44, 0.15)';
+              }}
+            >
+              <p 
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#1A1A1A',
+                  marginBottom: '8px'
+                }}
+              >
+                Histoire
+              </p>
+              <p 
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '9px',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: '#003D2C',
+                  opacity: 0.5
+                }}
+              >
+                Archives · Récits · Mémoire
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation discrète en haut */}
+      <nav 
+        style={{
+          position: 'absolute',
+          top: 'var(--space-xl)',
+          right: 'var(--space-xl)',
+          display: 'flex',
+          gap: '32px',
+          zIndex: 100
+        }}
+      >
+        <button
+          onClick={onEnterQuetes}
+          className="small-caps"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '11px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#003D2C',
+            opacity: 0.6,
+            cursor: 'pointer',
+            transition: 'opacity var(--transition)'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+        >
+          Quêtes
+        </button>
+        <button
+          onClick={onEnterHistoire}
+          className="small-caps"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '11px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#003D2C',
+            opacity: 0.6,
+            cursor: 'pointer',
+            transition: 'opacity var(--transition)'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+        >
+          Histoire
+        </button>
+        <button
+          onClick={onEnterCarnet}
+          className="small-caps"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '11px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#003D2C',
+            opacity: 0.6,
+            cursor: 'pointer',
+            transition: 'opacity var(--transition)'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+        >
+          Carnet
+        </button>
+      </nav>
+
+      {/* Signature discrète */}
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: 'var(--space-lg)',
+          right: 'var(--space-lg)',
+          fontFamily: 'var(--font-serif)',
+          fontSize: '18px',
+          color: '#1A1A1A',
+          opacity: 0.15
+        }}
+      >
+        Petit Souvenir
+      </div>
+
+      {/* Responsive */}
+      <style>{`
+        @media (max-width: 968px) {
+          .homepage-container {
+            grid-template-columns: 1fr !important;
+            gap: var(--space-lg) !important;
+            text-align: center !important;
+          }
+          
+          .homepage-image {
+            display: flex !important;
+            order: -1;
+            max-width: 400px;
+            margin: 0 auto var(--space-xl) auto;
+          }
+          
+          h1 {
+            font-size: 48px !important;
+          }
+          
+          p[style*="max-width: 400px"] {
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
+          
+          button[style*="padding: 20px"] {
+            width: 100%;
+          }
+          
+          nav {
+            top: var(--space-md) !important;
+            right: var(--space-md) !important;
+            gap: 16px !important;
+            font-size: 10px !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}

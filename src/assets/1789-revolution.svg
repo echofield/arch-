@@ -1,0 +1,68 @@
+<svg viewBox="0 0 533 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Classical architecture with tree - movement and nature -->
+  
+  <!-- Colonnade perspective -->
+  <g opacity="0.15">
+    <!-- Left columns -->
+    <rect x="40" y="100" width="25" height="200" fill="#003D2C"/>
+    <rect x="36" y="90" width="33" height="12" fill="#003D2C"/>
+    <rect x="36" y="300" width="33" height="12" fill="#003D2C"/>
+    
+    <rect x="100" y="110" width="22" height="180" fill="#003D2C"/>
+    <rect x="97" y="100" width="28" height="11" fill="#003D2C"/>
+    <rect x="97" y="290" width="28" height="11" fill="#003D2C"/>
+    
+    <rect x="155" y="118" width="20" height="165" fill="#003D2C"/>
+    <rect x="152" y="108" width="26" height="11" fill="#003D2C"/>
+    <rect x="152" y="283" width="26" height="11" fill="#003D2C"/>
+    
+    <!-- Right columns (perspective) -->
+    <rect x="378" y="118" width="20" height="165" fill="#003D2C"/>
+    <rect x="375" y="108" width="26" height="11" fill="#003D2C"/>
+    <rect x="375" y="283" width="26" height="11" fill="#003D2C"/>
+    
+    <rect x="433" y="110" width="22" height="180" fill="#003D2C"/>
+    <rect x="430" y="100" width="28" height="11" fill="#003D2C"/>
+    <rect x="430" y="290" width="28" height="11" fill="#003D2C"/>
+    
+    <rect x="488" y="100" width="25" height="200" fill="#003D2C"/>
+    <rect x="484" y="90" width="33" height="12" fill="#003D2C"/>
+    <rect x="484" y="300" width="33" height="12" fill="#003D2C"/>
+    
+    <!-- Top architrave -->
+    <polygon points="20,80 180,100 353,100 533,80 533,95 353,115 180,115 20,95" fill="#003D2C"/>
+  </g>
+  
+  <!-- Tree (nature breaking through) -->
+  <g transform="translate(266, 200)">
+    <!-- Trunk -->
+    <rect x="-8" y="0" width="16" height="120" fill="#1A1A1A" opacity="0.7" rx="3"/>
+    
+    <!-- Branches (organic movement) -->
+    <line x1="0" y1="20" x2="-35" y2="-10" stroke="#1A1A1A" stroke-width="4" opacity="0.6"/>
+    <line x1="0" y1="30" x2="40" y2="-5" stroke="#1A1A1A" stroke-width="4" opacity="0.6"/>
+    <line x1="0" y1="50" x2="-30" y2="25" stroke="#1A1A1A" stroke-width="3" opacity="0.6"/>
+    <line x1="0" y1="60" x2="35" y2="35" stroke="#1A1A1A" stroke-width="3" opacity="0.6"/>
+    
+    <!-- Foliage (simplified, organic) -->
+    <circle cx="-35" cy="-10" r="25" fill="#003D2C" opacity="0.3"/>
+    <circle cx="40" cy="-5" r="28" fill="#003D2C" opacity="0.3"/>
+    <circle cx="-30" cy="25" r="22" fill="#003D2C" opacity="0.3"/>
+    <circle cx="35" cy="35" r="24" fill="#003D2C" opacity="0.3"/>
+    <circle cx="0" cy="10" r="30" fill="#003D2C" opacity="0.35"/>
+    
+    <!-- Additional organic forms -->
+    <ellipse cx="-20" cy="5" rx="20" ry="25" fill="#003D2C" opacity="0.25"/>
+    <ellipse cx="20" cy="15" rx="22" ry="27" fill="#003D2C" opacity="0.25"/>
+  </g>
+  
+  <!-- Ground line -->
+  <line x1="0" y1="320" x2="533" y2="320" stroke="#003D2C" stroke-width="1.5" opacity="0.4"/>
+  
+  <!-- Subtle movement lines (wind/energy) -->
+  <g opacity="0.08">
+    <path d="M 100 150 Q 150 140 200 145" stroke="#003D2C" stroke-width="1" fill="none"/>
+    <path d="M 120 180 Q 170 175 220 178" stroke="#003D2C" stroke-width="1" fill="none"/>
+    <path d="M 310 160 Q 360 155 410 158" stroke="#003D2C" stroke-width="1" fill="none"/>
+  </g>
+</svg>

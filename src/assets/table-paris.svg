@@ -1,0 +1,47 @@
+<svg viewBox="0 0 533 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Classical colonnade background -->
+  <g opacity="0.12">
+    <!-- Left column -->
+    <rect x="80" y="80" width="30" height="240" fill="#003D2C"/>
+    <rect x="75" y="70" width="40" height="15" fill="#003D2C"/>
+    <rect x="75" y="320" width="40" height="15" fill="#003D2C"/>
+    
+    <!-- Center column -->
+    <rect x="250" y="80" width="30" height="240" fill="#003D2C"/>
+    <rect x="245" y="70" width="40" height="15" fill="#003D2C"/>
+    <rect x="245" y="320" width="40" height="15" fill="#003D2C"/>
+    
+    <!-- Right column -->
+    <rect x="420" y="80" width="30" height="240" fill="#003D2C"/>
+    <rect x="415" y="70" width="40" height="15" fill="#003D2C"/>
+    <rect x="415" y="320" width="40" height="15" fill="#003D2C"/>
+    
+    <!-- Architrave -->
+    <rect x="60" y="60" width="410" height="12" fill="#003D2C"/>
+  </g>
+  
+  <!-- Table elements (symbolic) -->
+  <g transform="translate(200, 200)">
+    <!-- Wine bottle (simplified) -->
+    <rect x="-80" y="-60" width="20" height="80" fill="#1A1A1A" opacity="0.7" rx="2"/>
+    <rect x="-83" y="-70" width="26" height="12" fill="#1A1A1A" opacity="0.7" rx="1"/>
+    
+    <!-- Bread (symbolic loaf) -->
+    <ellipse cx="0" cy="0" rx="60" ry="30" fill="#1A1A1A" opacity="0.6"/>
+    <ellipse cx="0" cy="-5" rx="55" ry="25" fill="#E7E1D8" opacity="0.8"/>
+    
+    <!-- Wine glass -->
+    <g transform="translate(70, -20)">
+      <line x1="0" y1="40" x2="0" y2="0" stroke="#1A1A1A" stroke-width="2" opacity="0.7"/>
+      <ellipse cx="0" cy="0" rx="12" ry="6" fill="none" stroke="#1A1A1A" stroke-width="2" opacity="0.7"/>
+      <path d="M -12 0 Q -10 25 0 40 Q 10 25 12 0" fill="none" stroke="#1A1A1A" stroke-width="2" opacity="0.7"/>
+      <!-- Wine in glass -->
+      <path d="M -10 5 Q -8 20 0 30 Q 8 20 10 5 Z" fill="#8B0000" opacity="0.3"/>
+    </g>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="266" cy="340" r="4" fill="#003D2C" opacity="0.3"/>
+  <circle cx="290" cy="345" r="3" fill="#003D2C" opacity="0.3"/>
+  <circle cx="240" cy="343" r="3.5" fill="#003D2C" opacity="0.3"/>
+</svg>

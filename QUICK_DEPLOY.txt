@@ -1,0 +1,65 @@
+═══════════════════════════════════════════════════════════════
+  DÉPLOIEMENT RAPIDE - Commandes à exécuter
+═══════════════════════════════════════════════════════════════
+
+📤 ÉTAPE 1 : PUSH SUR GITHUB
+───────────────────────────────────────────────────────────────
+(Ouvrez Git Bash ou PowerShell dans le répertoire du projet)
+
+git init
+git add .
+git commit -m "Deploy to Vercel"
+git remote add origin https://github.com/echofield/arch-.git
+git branch -M main
+git push -u origin main
+
+
+🌐 ÉTAPE 2 : DÉPLOYER SUR VERCEL
+───────────────────────────────────────────────────────────────
+(Option A : Interface Web - RECOMMANDÉ)
+1. Aller sur https://vercel.com
+2. Cliquer "Add New Project"
+3. Importer echofield/arch-
+4. Ajouter les variables d'environnement (voir ci-dessous)
+5. Cliquer "Deploy"
+
+(Option B : CLI)
+vercel login
+vercel --prod
+
+
+🔐 ÉTAPE 3 : VARIABLES D'ENVIRONNEMENT VERCEL
+───────────────────────────────────────────────────────────────
+Dans Vercel Dashboard → Settings → Environment Variables :
+
+VITE_SUPABASE_URL = https://qvyrpzgxsppkwfvqvgcn.supabase.co
+VITE_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2eXJwemd4c3Bwa3dmdnF2Z2NuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NTc0MDIsImV4cCI6MjA3NzQzMzQwMn0.mYqlWWtonfV2etTLLsMQ0eXP805vpqC3nTZ6Pwy4on0
+
+
+🔧 ÉTAPE 4 : CONFIGURER SUPABASE EDGE FUNCTIONS
+───────────────────────────────────────────────────────────────
+1. Aller sur https://supabase.com/dashboard/project/qvyrpzgxsppkwfvqvgcn
+2. Settings → Edge Functions → Secrets
+3. Ajouter :
+   - SUPABASE_URL = https://qvyrpzgxsppkwfvqvgcn.supabase.co
+   - SUPABASE_SERVICE_ROLE_KEY = (trouvez dans Settings → API)
+   - JWT_SECRET = (trouvez dans Settings → API → JWT Secret)
+
+4. Déployer les fonctions :
+   npm install -g supabase
+   supabase login
+   supabase link --project-ref qvyrpzgxsppkwfvqvgcn
+   supabase functions deploy check-card
+   supabase functions deploy activate-card
+   supabase functions deploy login-card
+   supabase functions deploy server
+
+
+✅ ÉTAPE 5 : POST-DÉPLOIEMENT
+───────────────────────────────────────────────────────────────
+1. Ouvrir la console du navigateur sur votre site Vercel
+2. Exécuter : runMigration()
+3. Générer les codes QR : npx ts-node src/scripts/generate-card-codes.ts
+
+═══════════════════════════════════════════════════════════════
+

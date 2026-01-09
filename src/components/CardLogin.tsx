@@ -1,0 +1,273 @@
+import { useState } from 'react';
+import { GeometricBackground } from './GeometricBackground';
+
+interface CardLoginProps {
+  cardCode: string;
+  onLoggedIn: (cardData: { id: string; code: string; activated_at: string }) => void;
+  onBack?: () => void;
+}
+
+export function CardLogin({ cardCode, onLoggedIn, onBack }: CardLoginProps) {
+  const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
+  const [minutesRemaining, setMinutesRemaining] = useState<number | null>(null);
+
+  const handleLogin = async () => {
+    if (!password) {
+      setError('Veuillez saisir votre mot de passe');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID || 'your-project'}.supabase.co/functions/v1/make-server-9060b10a/login-card`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || ''}`
+          },
+          body: JSON.stringify({
+            code: cardCode,
+            password
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        // Gérer les erreurs spécifiques
+        if (data.locked) {
+          setIsLocked(true);
+          setMinutesRemaining(data.minutes_remaining || 15);
+          throw new Error(data.error || 'Carte verrouillée');
+        }
+
+        if (data.remaining_attempts !== undefined) {
+          setRemainingAttempts(data.remaining_attempts);
+        }
+
+        throw new Error(data.error || 'Erreur de connexion');
+      }
+
+      console.log('[CardLogin] Login successful:', data.card);
+
+      // Stocker la session dans localStorage
+      localStorage.setItem('arche_card_session', JSON.stringify({
+        card_id: data.card.id,
+        code: data.card.code,
+        logged_in_at: data.session.logged_in_at
+      }));
+
+      // Appeler onLoggedIn avec les données de la carte
+      onLoggedIn(data.card);
+
+    } catch (err: any) {
+      console.error('[CardLogin] Login error:', err);
+      setError(err.message || 'Erreur lors de la connexion');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const canSubmit = password.length > 0 && !isSubmitting && !isLocked;
+
+  return (
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--paper)', position: 'relative' }}>
+      <GeometricBackground composition="results" opacity={0.03} />
+
+      {/* Header */}
+      <div style={{ padding: 'var(--space-xl) var(--space-lg) var(--space-md)', position: 'relative', zIndex: 10 }}>
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="transition-opacity small-caps"
+            style={{
+              background: 'transparent',
+              opacity: 0.5,
+              transition: 'opacity var(--transition)'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '0.5'}
+          >
+            ‹ Retour
+          </button>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center" style={{ padding: '0 var(--space-lg)', position: 'relative', zIndex: 10 }}>
+        <div style={{ maxWidth: '480px', width: '100%' }}>
+          {/* Card Code Display */}
+          <div 
+            style={{
+              textAlign: 'center',
+              marginBottom: 'var(--space-xl)',
+              paddingBottom: 'var(--space-lg)',
+              borderBottom: `var(--border-thin) solid var(--grey-light)`
+            }}
+          >
+            <p 
+              className="small-caps" 
+              style={{ 
+                color: 'var(--gold)', 
+                marginBottom: 'var(--space-sm)',
+                opacity: 1
+              }}
+            >
+              Connexion à votre carte
+            </p>
+            <h1 style={{ 
+              fontFamily: 'var(--font-sans)',
+              fontSize: '32px',
+              fontWeight: '600',
+              letterSpacing: '0.15em',
+              color: 'var(--green)'
+            }}>
+              {cardCode}
+            </h1>
+          </div>
+
+          {/* Intro Text */}
+          <p 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '17px',
+              fontStyle: 'italic',
+              lineHeight: '1.7',
+              textAlign: 'center',
+              marginBottom: 'var(--space-xl)',
+              opacity: 0.8
+            }}
+          >
+            Bon retour.
+          </p>
+
+          {/* Password Input */}
+          <div style={{ marginBottom: 'var(--space-lg)' }}>
+            <label 
+              className="small-caps" 
+              style={{ 
+                display: 'block',
+                marginBottom: 'var(--space-sm)',
+                opacity: 1,
+                color: 'var(--ink)'
+              }}
+            >
+              Votre mot de passe
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              disabled={isLocked}
+              style={{
+                width: '100%',
+                background: 'transparent',
+                border: '0.5px solid var(--grey-light)',
+                borderRadius: '2px',
+                padding: 'var(--space-md)',
+                fontFamily: 'var(--font-serif)',
+                fontSize: '17px',
+                fontWeight: '300',
+                color: 'var(--ink)',
+                opacity: isLocked ? 0.5 : 1
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && canSubmit) {
+                  handleLogin();
+                }
+              }}
+            />
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div 
+              style={{
+                background: 'rgba(220, 38, 38, 0.08)',
+                border: '0.5px solid rgba(220, 38, 38, 0.3)',
+                borderRadius: '2px',
+                padding: 'var(--space-md)',
+                marginBottom: 'var(--space-lg)',
+                fontFamily: 'var(--font-serif)',
+                fontSize: '15px',
+                fontStyle: 'italic',
+                color: '#DC2626',
+                textAlign: 'center'
+              }}
+            >
+              {error}
+              {remainingAttempts !== null && remainingAttempts > 0 && (
+                <div style={{ marginTop: 'var(--space-xs)', fontSize: '13px', opacity: 0.8 }}>
+                  {remainingAttempts} tentative{remainingAttempts > 1 ? 's' : ''} restante{remainingAttempts > 1 ? 's' : ''}
+                </div>
+              )}
+              {isLocked && minutesRemaining !== null && (
+                <div style={{ marginTop: 'var(--space-xs)', fontSize: '13px', opacity: 0.8 }}>
+                  Réessayez dans {minutesRemaining} minute{minutesRemaining > 1 ? 's' : ''}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            onClick={handleLogin}
+            disabled={!canSubmit}
+            className="w-full transition-all"
+            style={{
+              background: canSubmit ? 'var(--green)' : 'var(--grey-light)',
+              color: 'var(--paper)',
+              padding: '20px 40px',
+              borderRadius: '2px',
+              fontFamily: 'var(--font-serif)',
+              fontSize: '16px',
+              fontWeight: '400',
+              transition: 'all var(--transition)',
+              opacity: canSubmit ? '1' : '0.5',
+              cursor: canSubmit ? 'pointer' : 'not-allowed',
+              boxShadow: canSubmit ? 'inset 0 -1px 0 rgba(0,0,0,0.1)' : 'none'
+            }}
+            onMouseEnter={(e) => {
+              if (canSubmit) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (canSubmit) {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }
+            }}
+          >
+            {isSubmitting ? 'Connexion...' : isLocked ? 'Carte verrouillée' : 'Entrer'}
+          </button>
+
+          {/* Warning */}
+          <p 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '13px',
+              fontStyle: 'italic',
+              lineHeight: '1.6',
+              textAlign: 'center',
+              marginTop: 'var(--space-lg)',
+              opacity: 0.5,
+              color: 'var(--ink)'
+            }}
+          >
+            En cas d'oubli du mot de passe, la carte ne peut plus être déverrouillée.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

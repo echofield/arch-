@@ -1,0 +1,735 @@
+import { MamlukGrid } from './MamlukGrid';
+import { BackButton } from './BackButton';
+import { ExternalLink, MapPin, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
+import { useState } from 'react';
+
+interface QueteDetailProps {
+  queteId: string;
+  onBack: () => void;
+}
+
+interface Stop {
+  name: string;
+  googleMapsUrl: string;
+  geste: string;
+}
+
+interface QueteData {
+  id: string;
+  title: string;
+  registre: string;
+  texte: string[];
+  duree: string;
+  itineraireComplet: string;
+  stops: Stop[];
+  image: string;
+}
+
+const QUETES_DATA: Record<string, QueteData> = {
+  lutece: {
+    id: 'lutece',
+    title: 'LUTÈCE — ORIGINE',
+    registre: 'Fondation · Geste · Mesure',
+    texte: [
+      'Avant les palais, avant les façades, Paris fut une solution. Un endroit où l\'eau accepte d\'être franchie. Un endroit où l\'on peut faire payer le passage.',
+      'Imagine la Seine sans quais : un delta plus sauvage, des îlots, de la boue, des variations. L\'Île de la Cité n\'est pas un monument. C\'est une stabilité rare au milieu du mouvement. C\'est suffisant pour fonder un monde.',
+      'La première intelligence de Paris est une intelligence de mesure : mesurer l\'eau, mesurer la route, mesurer le flux des choses. Puis vient Rome, qui impose un axe, une colonne vertébrale : la Rue Saint-Jacques. Tu peux la suivre comme on suit une vérité ancienne : droite, ascendante, obstinée.',
+      'Cette marche est courte mais profonde. Tu traverses la ville comme on traverse une origine. Tu ne regardes pas Paris : tu le lis à même le sol.'
+    ],
+    duree: '≈ 1h30–2h',
+    itineraireComplet: 'https://www.google.com/maps/dir/Parvis+Notre-Dame+-+Pl.+Jean-Paul+II,+Paris/Petit+Pont+-+Cardinal+Lustiger,+Quai+du+Marché+Neuf+-+Maurice+Grimaud,+Paris/4+Rue+de+la+Colombe,+75004+Paris/Rue+Saint-Jacques,+Paris/Pl.+du+Panthéon,+75005+Paris/Musée+de+Cluny+-+Musée+national+du+Moyen+Âge,+Place+Paul+Painlevé,+Paris/@48.8517265,2.3435555,16z/data=!3m1!4b1!4m38!4m37!1m5!1m1!1s0x47e671e19ff53a01:0x364022c7cc569f43!2m2!1d2.3479104!2d48.8530491!1m5!1m1!1s0x47e671e041334c2d:0x933470701899a80e!2m2!1d2.3470293!2d48.8525862!1m5!1m1!1s0x47e671e06718d7db:0x1b4122d699264426!2m2!1d2.350352!2d48.8534888!1m5!1m1!1s0x47e671e6e0622a55:0x8797435f2945e415!2m2!1d2.3429383!2d48.8437021!1m5!1m1!1s0x47e671e860951161:0x7052a6597c5e263d!2m2!1d2.3458986!2d48.8464115!1m5!1m1!1s0x47e671e6878b668d:0x6b97368686f345a5!2m2!1d2.3433608!2d48.8504351!3e2',
+    stops: [
+      {
+        name: 'Parvis Notre-Dame — Le point zéro',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Parvis+Notre-Dame+-+Pl.+Jean-Paul+II,+Paris',
+        geste: 'Tu es au centre. Pas symboliquement — géométriquement. Toutes les distances de France se mesurent depuis la plaque sous tes pieds. Mais avant d\'être un centre, c\'était un port. Les bateaux accostaient ici. La cathédrale est venue après, sur un lieu déjà utile. Le sacré s\'installe toujours sur ce qui fonctionne. Geste — Trouve la plaque du kilomètre zéro. Tiens-toi dessus. Tu es à l\'origine des routes.'
+      },
+      {
+        name: 'Petit Pont — Le premier passage',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Petit+Pont+-+Cardinal+Lustiger,+Quai+du+Marché+Neuf+-+Maurice+Grimaud,+Paris',
+        geste: 'C\'est le plus vieux point de traversée de Paris. Il a brûlé onze fois. Avant la pierre, c\'était du bois. Et sur le bois, des maisons. Des gens vivaient au-dessus de l\'eau, dans le risque permanent. Arrête-toi au milieu du pont. Regarde l\'eau. Elle a toujours voulu reprendre ce passage. La ville a toujours reconstruit. Geste — Reste une minute immobile au milieu. Sens le flux sous toi. La ville commence par une insistance.'
+      },
+      {
+        name: 'Rue de la Colombe — Le mur invisible',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=4+Rue+de+la+Colombe,+75004+Paris',
+        geste: 'Cette rue suit le tracé exact du rempart gallo-romain. Il n\'existe plus, mais la ville a gardé sa forme. Cherche au sol : il y a des pavés plus sombres qui marquent la ligne de l\'ancienne muraille. Paris ne détruit jamais complètement. Elle absorbe, elle recouvre, elle garde les réflexes. Geste — Marche le long de la ligne. Tu suis une frontière que plus personne ne défend.'
+      },
+      {
+        name: 'Rue Saint-Jacques — L\'axe romain',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rue+Saint-Jacques,+Paris',
+        geste: 'Tu entres sur le Cardo Maximus. La colonne vertébrale que Rome a plantée dans la boue gauloise. Cette rue existait avant les rois, avant les églises, avant le nom même de Paris. Monte lentement. Ne regarde pas les boutiques. Regarde la pente. Cette ligne droite qui monte vers le sud, c\'est une décision vieille de deux mille ans. Geste — Marche au milieu de la rue quand tu peux. Sens l\'axe dans ton corps. Tu remonts le temps en montant la pente.'
+      },
+      {
+        name: 'Place du Panthéon — La mesure du ciel',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Pl.+du+Panthéon,+75005+Paris',
+        geste: 'Ici, la ville a décidé de s\'aligner sur une idée. La perspective, la symétrie, le Panthéon au bout — ce n\'est pas un hasard. C\'est une géométrie imposée au sol. Au XVIIIe siècle, on a voulu que Paris ressemble à ce qu\'on pensait de la raison. Cette place est une croyance devenue pierre. Geste — Place-toi dans l\'axe exact de la rue Soufflot. Regarde le Panthéon. Quelqu\'un a voulu que tu te tiennes exactement là.'
+      },
+      {
+        name: 'Musée de Cluny — La continuité',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Musée+de+Cluny+-+Musée+national+du+Moyen+Âge,+Place+Paul+Painlevé,+Paris',
+        geste: 'Si tu entres, tu refermes la boucle. Ce lieu est construit sur des thermes romains. Les pierres que tu vois dans la cour ont chauffé des corps il y a deux mille ans. Au-dessus, un hôtel médiéval. La ville s\'empile sur elle-même. Tu ne visites pas un musée. Tu descends dans les couches. Geste — Si tu n\'entres pas, touche le mur extérieur. La pierre est romaine. Ta main touche ce que la ville a décidé de ne pas effacer.'
+      }
+    ],
+    image: 'https://i.imgur.com/1uLhXia.jpeg'
+  },
+  '1789': {
+    id: '1789',
+    title: '1789 — DÉCISION',
+    registre: 'Seuil · Passage · Bascule',
+    texte: [
+      'Une révolution ne commence pas par une idée. Elle commence par un espace qui change de fonction.',
+      'Au Palais-Royal, l\'architecture a fabriqué un accident. Des arcades où l\'on marche sans but. Des cafés où l\'on reste trop longtemps. Des imprimeurs qui sortent des feuilles encore humides. Une densité de paroles, de regards, de rumeurs. Ce n\'est pas un jardin. C\'est une chambre d\'écho.',
+      'Puis il y a le geste. Un homme monte sur une table de café. Un meuble de consommation devient une tribune. Le privé bascule dans le public. À cet instant, quelque chose devient irréversible.',
+      'Cette marche suit cette logique : incubation → déclenchement → propagation → institution. Tu passes de l\'espace où l\'on parle à l\'espace où l\'on décide.'
+    ],
+    duree: '≈ 2h–2h30',
+    itineraireComplet: 'https://www.google.com/maps/dir/Jardin+du+Palais+Royal,+75001+Paris/Galerie+Montpensier,+75001+Paris/Rue+Saint-Honoré,+75001+Paris/230+Rue+de+Rivoli,+75001+Paris/Jardin+des+Tuileries,+75001+Paris/Place+de+la+Concorde,+75008+Paris/@48.8636,2.3277,15z/data=!3m1!4b1!4m38!4m37!1m5!1m1!1s0x47e66e1da38e76d5:0x7a1f8b3b3b3b3b3b!2m2!1d2.3377778!2d48.8638889!1m5!1m1!1s0x47e66e1da38e76d5:0x7a1f8b3b3b3b3b3b!2m2!1d2.3377778!2d48.8638889!1m5!1m1!1s0x47e66e1f5c0e0e0e:0x0e0e0e0e0e0e0e0e!2m2!1d2.3333333!2d48.8666667!1m5!1m1!1s0x47e66e1f5c0e0e0e:0x0e0e0e0e0e0e0e0e!2m2!1d2.3308333!2d48.8641667!1m5!1m1!1s0x47e66e2e0e0e0e0e:0x0e0e0e0e0e0e0e0e!2m2!1d2.3275!2d48.8636111!1m5!1m1!1s0x47e66e2e0e0e0e0e:0x0e0e0e0e0e0e0e0e!2m2!1d2.3213889!2d48.8656111!3e2',
+    stops: [
+      {
+        name: 'Jardin du Palais-Royal — La chambre d\'écho',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jardin+du+Palais+Royal,+75001+Paris',
+        geste: 'Entre par n\'importe quelle entrée. Fais le tour sous les arcades avant d\'aller au centre. Sens comment l\'espace te retient. Les galeries forment un rectangle fermé. Le son rebondit. Les regards se croisent. Au XVIIIe siècle, c\'était le seul endroit de Paris où la police n\'entrait pas — propriété privée du duc d\'Orléans. On pouvait parler. On pouvait imprimer. On pouvait comploter à ciel ouvert. Geste — Assieds-toi quelques minutes sur une chaise du jardin. Regarde les gens passer sous les arcades. Imagine le même lieu avec dix fois plus de monde, dix fois plus de bruit, et aucune loi.'
+      },
+      {
+        name: 'Galerie Montpensier — Le café de Foy',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Galerie+Montpensier,+75001+Paris',
+        geste: 'Cherche l\'emplacement. Il n\'y a plus de café de Foy, mais la zone est là — côté est du jardin, sous les arcades. Le 12 juillet 1789, Camille Desmoulins monte sur une table. Il parle. Il crie. Il arrache une feuille d\'arbre et la met à son chapeau — signe de ralliement. Deux jours plus tard, la Bastille tombe. Ce n\'était pas un discours prévu. C\'était un débordement. L\'espace l\'a permis. Geste — Tiens-toi à l\'endroit approximatif. Regarde la hauteur des arcades. Imagine la voix qui porte, qui rebondit, qui enfle. Une table, un corps debout, et la suite de l\'histoire.'
+      },
+      {
+        name: 'Sortie vers Rue Saint-Honoré — La propagation',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rue+Saint-Honoré,+75001+Paris',
+        geste: 'Sors du Palais-Royal par le passage qui donne sur la rue Saint-Honoré. Tu passes du rectangle clos à la ligne ouverte. La rumeur qui naît dans la chambre d\'écho se propage ici, dans les rues. Elle marche plus vite que l\'ordre écrit. Les gens courent. Les nouvelles se déforment. Ce qui était une parole devient un mouvement. Geste — Marche vite pendant deux minutes. Ne regarde pas les vitrines. Sens l\'accélération. La ville devient un circuit.'
+      },
+      {
+        name: '230 Rue de Rivoli — Le Manège disparu',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=230+Rue+de+Rivoli,+75001+Paris',
+        geste: 'Cherche la plaque. Il n\'y a plus rien à voir — un passage, des immeubles. Mais ici se tenait la salle du Manège, où l\'Assemblée nationale s\'est installée. Imagine une salle étroite, mal aérée, bruyante. Les députés qui crient pour se faire entendre. La politique avant l\'éloquence solennelle. Avant d\'être majestueuse, la démocratie a été inaudible. Geste — Lis la plaque. Reste un moment devant ce vide. Les lieux de décision disparaissent. Les décisions restent.'
+      },
+      {
+        name: 'Jardin des Tuileries — Le calme d\'après',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jardin+des+Tuileries,+75001+Paris',
+        geste: 'Entre dans le jardin. Marche lentement. Le contraste est violent. Ce silence, cette géométrie, ces arbres alignés — c\'est le pouvoir qui reprend l\'espace. Les Tuileries ont vu des émeutes, des invasions, des foules. Aujourd\'hui, des enfants et des touristes. Le pouvoir aime les jardins. Il aime que les choses aient l\'air calmes. Geste — Trouve un banc. Assieds-toi face au Louvre. Respire. Tu traverses le temps d\'après la décision.'
+      },
+      {
+        name: 'Place de la Concorde — Le seuil final',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Place+de+la+Concorde,+75008+Paris',
+        geste: 'Tu arrives sur la place. Elle est trop grande. C\'est fait exprès. Ici, le 21 janvier 1793, la décision est devenue irréversible. Une tête est tombée. Après ça, plus personne ne pouvait dire "on arrête, on revient en arrière". Le pays entier a basculé dans l\'inconnu. Tu n\'as pas besoin d\'imaginer la guillotine. Regarde l\'espace. Sens l\'exposition. Être ici, c\'était être vu par des milliers de personnes. Le pouvoir et la mort, même mise en scène. Geste — Traverse la place à pied. Ne contourne pas. Va jusqu\'à l\'obélisque, puis continue. La ville reprend après. La décision reste derrière toi.'
+      }
+    ],
+    image: 'https://i.imgur.com/iyCcmoS.jpeg'
+  },
+  table: {
+    id: 'table',
+    title: 'VIN & TABLE — VIE PARISIENNE',
+    registre: 'Nourriture · Corps · Ville vivante',
+    texte: [
+      'Une ville se raconte par ce qu\'elle avale. Paris est une gorge, un ventre, une bouche. Elle a toujours eu faim. Elle a toujours eu soif.',
+      'Ce parcours ne raconte pas l\'histoire de la gastronomie parisienne. Il la traverse. On commence par l\'église des marchands, on passe par le fantôme du plus grand marché d\'Europe, on remonte une artère qui n\'a jamais cessé de nourrir.',
+      'Ici, pas de folklore. Pas de "vieux Paris pittoresque". Juste une ville qui mange, qui boit, qui digère — et toi au milieu.',
+      'Marche lentement. Achète quelque chose. Goûte. La ville se comprend par le corps.'
+    ],
+    duree: '≈ 2h30–3h',
+    itineraireComplet: 'https://www.google.com/maps/dir/Église+Saint-Eustache,+Paris/Jardin+Nelson-Mandela,+Allée+Jules+Supervielle,+Paris/Rue+Montorgueil,+Paris/Stohrer,+Rue+Montorgueil,+Paris/Au+Rocher+de+Cancale,+Rue+Montorgueil,+Paris/Passage+du+Grand-Cerf,+Paris/@48.8648,2.345,16z/data=!3m1!4b1!4m38!4m37!1m5!1m1!1s0x47e66e1f0e35261b:0x5e0892042738260!2m2!1d2.3452445!2d48.8633393!1m5!1m1!1s0x47e66e1f9a888805:0x98555848e43e2e5e!2m2!1d2.3458686!2d48.8624389!1m5!1m1!1s0x47e66e18af291f09:0xd2755e105051a37c!2m2!1d2.3463378!2d48.8652618!1m5!1m1!1s0x47e66e1ed637b38d:0x22876805d76d8b94!2m2!1d2.3468965!2d48.8658607!1m5!1m1!1s0x47e66e1933a3641b:0x536a00445a6c1741!2m2!1d2.3473105!2d48.8672052!1m5!1m1!1s0x47e66e19636657c9:0x417036437d25e0c!2m2!1d2.3496667!2d48.8663889!3e2',
+    stops: [
+      {
+        name: 'Saint-Eustache — L\'église du ventre',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2+Impasse+Saint-Eustache,+75001+Paris',
+        geste: 'Cette église est énorme, et ce n\'est pas un hasard. Elle a été construite avec l\'argent des marchands des Halles. Pendant des siècles, les gens qui nourrissaient Paris venaient ici remercier ou demander. Le sacré et la bouffe, même adresse. Entre quelques minutes. L\'acoustique est immense. Laisse le silence te préparer au bruit qui vient.'
+      },
+      {
+        name: 'Jardin Nelson-Mandela — Le fantôme des Halles',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jardin+Nelson+Mandela,+Allée+Jules+Supervielle,+75001+Paris',
+        geste: 'Tu marches sur un vide. Jusqu\'en 1971, ici, c\'était le ventre de Paris. Le plus grand marché alimentaire d\'Europe. Des pavillons de fer et de verre. Des cris dès 3h du matin. L\'odeur du sang, du fromage, des légumes écrabouillés. On a tout rasé. Il reste ce jardin, cette canopée, ce centre commercial. Mais le sol se souvient. Cherche les quelques traces : la fontaine des Innocents (ancien cimetière devenu place de marché), les rues autour qui portent encore les noms des métiers.'
+      },
+      {
+        name: 'Rue Montorgueil — L\'entrée par le bas',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rue+Montorgueil,+75002+Paris',
+        geste: 'Tu entres dans l\'artère par le sud, là où elle commence. Ne marche pas sur le côté. Marche au milieu, dans le flux. Cette rue n\'a jamais été silencieuse. Avant les pavés, avant les devantures, c\'était déjà une circulation de bouches et de mains. Poissonniers, fromagers, marchands de quatre-saisons. Aujourd\'hui le décor a changé, pas l\'énergie. Achète quelque chose que tu mangeras en marchant. N\'importe quoi. Le geste compte plus que le choix.'
+      },
+      {
+        name: 'Stohrer — La pâtisserie continue',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=51+Rue+Montorgueil,+75002+Paris',
+        geste: 'Stohrer existe depuis 1730. Ce n\'est pas un "monument historique". C\'est un lieu qui n\'a jamais fermé. Le pâtissier de la reine Marie Leszczyńska a ouvert ici, et depuis, quelqu\'un a toujours vendu des gâteaux à cet endroit. Un lieu n\'est pas vieux. Il est continu. Entre. Prends un baba au rhum ou un puits d\'amour. Mange-le dehors, debout. C\'est comme ça qu\'on faisait.'
+      },
+      {
+        name: 'Au Rocher de Cancale — La façade qui parle',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=78+Rue+Montorgueil,+75002+Paris',
+        geste: 'Regarde la devanture. Les coquilles sculptées. Les détails. Ce restaurant existe depuis 1804. Balzac y venait, mais pas pour la cuisine. Au XIXe siècle, les restaurants étaient des bourses aux nouvelles. On venait entendre ce qui se passait, qui faisait quoi, où allait l\'argent. Manger était un prétexte. L\'information circulait entre les plats. La nourriture a toujours été politique. Si tu as le temps, entre boire un verre. Sinon, reste devant. Imagine les conversations qui ont traversé ces murs.'
+      },
+      {
+        name: 'Passage du Grand-Cerf — L\'ouverture',
+        googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=145+Rue+Saint-Denis,+75002+Paris',
+        geste: 'Tu ne termines pas. Tu traverses. Ce passage est l\'un des plus hauts de Paris. Verrière, fer forgé, lumière. Il relie deux mondes : le quartier gourmand que tu quittes, et le Paris populaire de Strasbourg-Saint-Denis qui t\'attend. Un bon parcours ne se ferme pas. Il ouvre sur ce qui vient après. Traverse lentement. Regarde en l\'air. Puis sors de l\'autre côté et continue ta journée. La ville ne s\'arrête pas.'
+      }
+    ],
+    image: 'https://i.imgur.com/VtWPT2M.jpeg'
+  }
+};
+
+/**
+ * DÉTAIL QUÊTE — V1 ARCHÉ
+ * 
+ * Structure éditoriale stricte :
+ * - Texte long + itinéraire complet
+ * - Chaque stop = nom + lien Google Maps + geste
+ * - Pas de validation, pas de score
+ * 
+ * La quête existe dans la marche, pas dans l'écran.
+ */
+export function QueteDetail({ queteId, onBack }: QueteDetailProps) {
+  const quete = QUETES_DATA[queteId];
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  if (!quete) {
+    return (
+      <div style={{ padding: 'var(--space-xxl)', textAlign: 'center' }}>
+        <p>Quête introuvable</p>
+        <button onClick={onBack}>Retour</button>
+      </div>
+    );
+  }
+
+  const downloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    
+    // Petit délai pour montrer le feedback
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const doc = new jsPDF({
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 25;
+    const contentWidth = pageWidth - (margin * 2);
+    let y = margin;
+
+    // --- PAGE DE GARDE ---
+    
+    // Barre supérieure (accent vert)
+    doc.setFillColor(0, 61, 44);
+    doc.rect(0, 0, pageWidth, 3, 'F');
+    
+    y = 60;
+    
+    // Titre principal
+    doc.setFont('times', 'bold');
+    doc.setFontSize(28);
+    doc.setTextColor(26, 26, 26);
+    const titleLines = doc.splitTextToSize(quete.title, contentWidth);
+    titleLines.forEach((line: string) => {
+      doc.text(line, pageWidth / 2, y, { align: 'center' });
+      y += 12;
+    });
+    
+    y += 8;
+    
+    // Registre (small caps simulé)
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(0, 61, 44);
+    doc.text(quete.registre.toUpperCase(), pageWidth / 2, y, { align: 'center' });
+    
+    y += 15;
+    
+    // Durée
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(163, 135, 103);
+    doc.text(`Durée : ${quete.duree}`, pageWidth / 2, y, { align: 'center' });
+    
+    // Ligne de séparation
+    y += 20;
+    doc.setDrawColor(219, 212, 198);
+    doc.setLineWidth(0.5);
+    doc.line(margin + 30, y, pageWidth - margin - 30, y);
+    
+    y += 20;
+    
+    // Texte éditorial
+    doc.setFont('times', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(26, 26, 26);
+    
+    quete.texte.forEach(paragraphe => {
+      const lines = doc.splitTextToSize(paragraphe, contentWidth);
+      
+      // Vérifier si on a besoin d'une nouvelle page
+      if (y + (lines.length * 6) > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      
+      doc.text(lines, margin, y);
+      y += lines.length * 6 + 8;
+    });
+    
+    // --- PAGE ITINÉRAIRE ---
+    doc.addPage();
+    y = margin;
+    
+    // Barre supérieure
+    doc.setFillColor(0, 61, 44);
+    doc.rect(0, 0, pageWidth, 3, 'F');
+    
+    y = 40;
+    
+    // Titre section
+    doc.setFont('times', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(26, 26, 26);
+    doc.text('Itinéraire', margin, y);
+    
+    y += 15;
+    
+    // Ligne de séparation
+    doc.setDrawColor(219, 212, 198);
+    doc.setLineWidth(0.5);
+    doc.line(margin, y, pageWidth - margin, y);
+    
+    y += 12;
+    
+    // Stops
+    quete.stops.forEach((stop, index) => {
+      // Vérifier si on a besoin d'une nouvelle page
+      if (y > pageHeight - 50) {
+        doc.addPage();
+        y = margin;
+      }
+      
+      // Numéro
+      doc.setFont('times', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(0, 61, 44);
+      doc.text(`${index + 1}.`, margin, y);
+      
+      // Nom du lieu
+      doc.setFont('times', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(26, 26, 26);
+      const nameLines = doc.splitTextToSize(stop.name, contentWidth - 10);
+      doc.text(nameLines, margin + 8, y);
+      
+      y += nameLines.length * 6 + 4;
+      
+      // Geste (italique)
+      doc.setFont('times', 'italic');
+      doc.setFontSize(10);
+      doc.setTextColor(26, 26, 26);
+      const gesteLines = doc.splitTextToSize(stop.geste, contentWidth - 10);
+      doc.text(gesteLines, margin + 8, y);
+      
+      y += gesteLines.length * 5 + 10;
+    });
+    
+    // --- FOOTER SUR TOUTES LES PAGES ---
+    const pageCount = doc.getNumberOfPages();
+    
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      
+      // Ligne supérieure footer
+      doc.setDrawColor(219, 212, 198);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageHeight - 20, pageWidth - margin, pageHeight - 20);
+      
+      // Texte footer
+      doc.setFont('times', 'italic');
+      doc.setFontSize(8);
+      doc.setTextColor(26, 26, 26);
+      doc.text('ARCHÉ — Petit Souvenir', pageWidth / 2, pageHeight - 12, { align: 'center' });
+      
+      // Numéro de page
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(163, 135, 103);
+      doc.text(`${i}`, pageWidth - margin, pageHeight - 12, { align: 'right' });
+    }
+    
+    // Télécharger
+    const fileName = quete.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    doc.save(`${fileName}-petit-souvenir.pdf`);
+    
+    setIsGeneratingPDF(false);
+  };
+
+  return (
+    <div 
+      className="min-h-screen relative"
+      style={{ 
+        background: '#FAF8F2',
+        overflow: 'auto'
+      }}
+    >
+      {/* Ghost Grid Mamluk */}
+      <MamlukGrid pattern="tessellation" opacity={0.02} scale={1} rotation={30} layers={1} />
+
+      {/* Back button */}
+      <BackButton onClick={onBack} />
+
+      {/* Container principal */}
+      <div 
+        className="quete-detail-container"
+        style={{
+          maxWidth: '800px',
+          margin: '0 auto',
+          padding: 'var(--space-xxl)',
+          paddingTop: '120px',
+          position: 'relative',
+          zIndex: 10
+        }}
+      >
+        {/* Image en tête */}
+        <div 
+          style={{
+            aspectRatio: '16 / 9',
+            background: '#E7E1D8',
+            marginBottom: 'var(--space-xxl)',
+            border: '1px solid #DBD4C6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          <img 
+            src={quete.image} 
+            alt={quete.title}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+          />
+        </div>
+
+        {/* Header */}
+        <header style={{ marginBottom: 'var(--space-xxl)' }}>
+          <h1 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '56px',
+              fontWeight: '600',
+              color: '#1A1A1A',
+              marginBottom: 'var(--space-sm)',
+              letterSpacing: '-0.02em',
+              lineHeight: '1.1'
+            }}
+          >
+            {quete.title}
+          </h1>
+
+          <p 
+            className="small-caps"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '11px',
+              letterSpacing: '0.2em',
+              color: '#003D2C',
+              opacity: 0.6,
+              marginBottom: 'var(--space-md)'
+            }}
+          >
+            {quete.registre}
+          </p>
+
+          <p 
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '13px',
+              letterSpacing: '0.05em',
+              color: '#A38767',
+              opacity: 0.8
+            }}
+          >
+            Durée : {quete.duree}
+          </p>
+
+          {/* Séparateur */}
+          <div 
+            style={{
+              width: '80px',
+              height: '2px',
+              background: '#003D2C',
+              opacity: 0.3,
+              marginTop: 'var(--space-xl)'
+            }}
+          />
+        </header>
+
+        {/* Texte éditorial */}
+        <article style={{ marginBottom: 'var(--space-xxl)' }}>
+          {quete.texte.map((paragraphe, index) => (
+            <p 
+              key={index}
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: '20px',
+                lineHeight: '1.8',
+                color: '#1A1A1A',
+                marginBottom: 'var(--space-xl)',
+                fontWeight: '300'
+              }}
+            >
+              {paragraphe}
+            </p>
+          ))}
+        </article>
+
+        {/* Séparateur */}
+        <div 
+          style={{
+            width: '100%',
+            height: '1px',
+            background: '#DBD4C6',
+            margin: 'var(--space-xxl) 0'
+          }}
+        />
+
+        {/* Itinéraire */}
+        <section style={{ marginBottom: 'var(--space-xxl)' }}>
+          <h2 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '32px',
+              fontWeight: '500',
+              color: '#1A1A1A',
+              marginBottom: 'var(--space-lg)',
+              letterSpacing: '-0.01em'
+            }}
+          >
+            Itinéraire
+          </h2>
+
+          {/* CTA — Itinéraire complet */}
+          <a
+            href={quete.itineraireComplet}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 'var(--space-sm)',
+              width: '100%',
+              background: '#003D2C',
+              color: '#FAF8F2',
+              border: 'none',
+              padding: '18px 32px',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '12px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'all var(--transition)',
+              fontWeight: '500',
+              marginBottom: 'var(--space-xl)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#00543D';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 61, 44, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#003D2C';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <ExternalLink size={16} />
+            Ouvrir l'itinéraire complet dans Google Maps
+          </a>
+
+          {/* CTA — Télécharger le PDF */}
+          <button
+            onClick={downloadPDF}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 'var(--space-sm)',
+              width: '100%',
+              background: '#003D2C',
+              color: '#FAF8F2',
+              border: 'none',
+              padding: '18px 32px',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '12px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'all var(--transition)',
+              fontWeight: '500',
+              marginBottom: 'var(--space-xl)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#00543D';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 61, 44, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#003D2C';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <Download size={16} />
+            {isGeneratingPDF ? 'Génération...' : 'Télécharger le parcours en PDF'}
+          </button>
+
+          {/* Liste des stops */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+            {quete.stops.map((stop, index) => (
+              <div 
+                key={index}
+                style={{
+                  background: '#FFFFFF',
+                  border: '1px solid #E7E1D8',
+                  padding: 'var(--space-lg)',
+                  transition: 'all var(--transition)'
+                }}
+              >
+                {/* Numéro + Nom */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-md)', marginBottom: 'var(--space-sm)' }}>
+                  <span 
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '24px',
+                      fontWeight: '600',
+                      color: '#003D2C',
+                      opacity: 0.4,
+                      minWidth: '32px'
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  <h3 
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '18px',
+                      fontWeight: '500',
+                      color: '#1A1A1A',
+                      lineHeight: '1.4'
+                    }}
+                  >
+                    {stop.name}
+                  </h3>
+                </div>
+
+                {/* Geste */}
+                <p 
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '15px',
+                    fontStyle: 'italic',
+                    color: '#1A1A1A',
+                    opacity: 0.7,
+                    lineHeight: '1.6',
+                    marginBottom: 'var(--space-md)',
+                    marginLeft: '48px'
+                  }}
+                >
+                  {stop.geste}
+                </p>
+
+                {/* Lien Google Maps */}
+                <div style={{ marginLeft: '48px' }}>
+                  <a
+                    href={stop.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-xs)',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '11px',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: '#003D2C',
+                      textDecoration: 'none',
+                      fontWeight: '500',
+                      transition: 'all var(--transition)',
+                      opacity: 0.6
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.color = '#00543D';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '0.6';
+                      e.currentTarget.style.color = '#003D2C';
+                    }}
+                  >
+                    <MapPin size={14} />
+                    Voir sur Google Maps
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Micro-règle V1 */}
+        <footer style={{ textAlign: 'center', paddingTop: 'var(--space-xxl)', borderTop: '1px solid #DBD4C6' }}>
+          <p 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '14px',
+              color: '#1A1A1A',
+              opacity: 0.5,
+              fontStyle: 'italic',
+              marginBottom: 'var(--space-md)'
+            }}
+          >
+            Un texte. Une marche. Un lien. Rien d'autre.
+          </p>
+          
+          <p 
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '12px',
+              color: '#1A1A1A',
+              opacity: 0.3,
+              fontStyle: 'italic'
+            }}
+          >
+            ARCHÉ — Petit Souvenir
+          </p>
+        </footer>
+      </div>
+
+      {/* Responsive */}
+      <style>{`
+        @media (max-width: 768px) {
+          .quete-detail-container {
+            padding: var(--space-lg) !important;
+            padding-top: 100px !important;
+          }
+
+          .quete-detail-container h1 {
+            font-size: 36px !important;
+          }
+          
+          .quete-detail-container h2 {
+            font-size: 26px !important;
+          }
+          
+          .quete-detail-container article p {
+            font-size: 17px !important;
+          }
+
+          .quete-detail-container h3 {
+            font-size: 16px !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
