@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MamlukGrid } from './MamlukGrid';
 import { BackButton } from './BackButton';
 import { SYMBOLS, getSymbolsByArrondissement, type Symbol } from '../data/symbols';
@@ -8,29 +8,49 @@ interface CollectionMapProps {
   onBack: () => void;
 }
 
-// Coordonnées approximatives des arrondissements pour le placement
-const ARRONDISSEMENT_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: 48, y: 45 },
-  2: { x: 52, y: 38 },
-  3: { x: 58, y: 42 },
-  4: { x: 55, y: 50 },
-  5: { x: 52, y: 58 },
-  6: { x: 44, y: 55 },
-  7: { x: 35, y: 52 },
-  8: { x: 38, y: 35 },
-  9: { x: 48, y: 32 },
-  10: { x: 58, y: 30 },
-  11: { x: 65, y: 45 },
-  12: { x: 72, y: 58 },
-  13: { x: 58, y: 70 },
-  14: { x: 45, y: 72 },
-  15: { x: 30, y: 65 },
-  16: { x: 20, y: 45 },
-  17: { x: 32, y: 25 },
-  18: { x: 48, y: 18 },
-  19: { x: 65, y: 20 },
-  20: { x: 75, y: 35 }
-};
+// SVG Paths for Paris arrondissements (escargot pattern from center)
+const ARRONDISSEMENT_PATHS: { arr: number; path: string; labelX: number; labelY: number }[] = [
+  // 1er - Louvre (centre)
+  { arr: 1, path: "M360,280 L390,275 L395,300 L385,320 L360,315 Z", labelX: 375, labelY: 300 },
+  // 2e - Bourse (nord du 1er)
+  { arr: 2, path: "M390,275 L420,270 L425,295 L395,300 Z", labelX: 407, labelY: 285 },
+  // 3e - Temple (est du 2e)
+  { arr: 3, path: "M420,270 L460,280 L455,310 L425,295 Z", labelX: 440, labelY: 290 },
+  // 4e - Hôtel-de-Ville (sud du 3e)
+  { arr: 4, path: "M395,300 L425,295 L455,310 L450,340 L410,350 L385,320 Z", labelX: 420, labelY: 320 },
+  // 5e - Panthéon (sud du 4e)
+  { arr: 5, path: "M385,320 L410,350 L420,390 L380,400 L350,370 L360,315 Z", labelX: 385, labelY: 360 },
+  // 6e - Luxembourg (ouest du 5e)
+  { arr: 6, path: "M310,340 L360,315 L350,370 L380,400 L340,420 L290,380 Z", labelX: 335, labelY: 370 },
+  // 7e - Palais-Bourbon (ouest du 6e)
+  { arr: 7, path: "M220,310 L310,340 L290,380 L340,420 L280,450 L200,400 L180,340 Z", labelX: 260, labelY: 375 },
+  // 8e - Élysée (nord du 7e)
+  { arr: 8, path: "M250,220 L330,240 L360,280 L310,340 L220,310 L180,340 L170,280 L200,230 Z", labelX: 270, labelY: 280 },
+  // 9e - Opéra (est du 8e)
+  { arr: 9, path: "M330,240 L380,230 L390,275 L360,280 Z", labelX: 365, labelY: 255 },
+  // 10e - Enclos-St-Laurent (est du 9e)
+  { arr: 10, path: "M380,230 L460,210 L480,250 L460,280 L420,270 L390,275 Z", labelX: 430, labelY: 250 },
+  // 11e - Popincourt (sud-est du 10e)
+  { arr: 11, path: "M460,280 L520,270 L540,330 L500,370 L450,340 L455,310 Z", labelX: 495, labelY: 320 },
+  // 12e - Reuilly (sud du 11e)
+  { arr: 12, path: "M450,340 L500,370 L540,330 L600,380 L580,480 L480,450 L420,390 L410,350 Z", labelX: 510, labelY: 410 },
+  // 13e - Gobelins (sud-ouest du 12e)
+  { arr: 13, path: "M380,400 L420,390 L480,450 L500,520 L400,540 L350,480 Z", labelX: 420, labelY: 475 },
+  // 14e - Observatoire (ouest du 13e)
+  { arr: 14, path: "M280,450 L340,420 L380,400 L350,480 L400,540 L320,560 L250,500 Z", labelX: 330, labelY: 490 },
+  // 15e - Vaugirard (nord-ouest du 14e)
+  { arr: 15, path: "M120,380 L200,400 L280,450 L250,500 L320,560 L200,570 L100,500 Z", labelX: 200, labelY: 480 },
+  // 16e - Passy (nord du 15e)
+  { arr: 16, path: "M80,240 L170,280 L180,340 L120,380 L100,500 L60,420 L40,320 Z", labelX: 110, labelY: 360 },
+  // 17e - Batignolles-Monceau (nord-est du 16e)
+  { arr: 17, path: "M170,120 L280,140 L330,180 L330,240 L250,220 L200,230 L170,280 L80,240 L100,160 Z", labelX: 200, labelY: 195 },
+  // 18e - Butte-Montmartre (est du 17e)
+  { arr: 18, path: "M280,140 L380,120 L430,150 L460,210 L380,230 L330,240 L330,180 Z", labelX: 375, labelY: 180 },
+  // 19e - Buttes-Chaumont (est du 18e)
+  { arr: 19, path: "M430,150 L540,140 L600,200 L560,250 L520,270 L460,280 L480,250 L460,210 Z", labelX: 515, labelY: 210 },
+  // 20e - Ménilmontant (sud du 19e)
+  { arr: 20, path: "M520,270 L560,250 L600,200 L640,280 L600,380 L540,330 Z", labelX: 575, labelY: 300 }
+];
 
 export function CollectionMap({ onBack }: CollectionMapProps) {
   const [selectedArr, setSelectedArr] = useState<number | null>(null);
@@ -46,13 +66,6 @@ export function CollectionMap({ onBack }: CollectionMapProps) {
     collectSymbol(symbolId);
     refreshStats();
     setShowSymbolDetail(null);
-  };
-
-  const getArrColor = (arr: number): string => {
-    const arrStats = stats.byArrondissement[arr];
-    if (arrStats.collected === 0) return 'rgba(0, 61, 44, 0.1)';
-    if (arrStats.collected === arrStats.total) return 'rgba(0, 61, 44, 0.6)';
-    return 'rgba(0, 61, 44, 0.3)';
   };
 
   const symbols = selectedArr ? getSymbolsByArrondissement(selectedArr) : [];
@@ -124,93 +137,79 @@ export function CollectionMap({ onBack }: CollectionMapProps) {
             }}
           >
             <svg
-              viewBox="0 0 100 100"
+              viewBox="0 0 800 600"
               style={{
                 width: '100%',
-                maxWidth: '500px',
+                maxWidth: '600px',
                 margin: '0 auto',
                 display: 'block'
               }}
             >
-              {/* Seine River - stylized */}
-              <path
-                d="M 5 55 Q 25 45, 45 50 Q 60 55, 75 48 Q 90 42, 100 45"
-                fill="none"
-                stroke="rgba(0, 61, 44, 0.15)"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-
-              {/* Arrondissements */}
-              {Object.entries(ARRONDISSEMENT_POSITIONS).map(([arr, pos]) => {
-                const arrNum = parseInt(arr);
-                const arrStats = stats.byArrondissement[arrNum];
-                const isSelected = selectedArr === arrNum;
+              {/* Paris Arrondissements Map */}
+              {ARRONDISSEMENT_PATHS.map(({ arr, path, labelX, labelY }) => {
+                const arrStats = stats.byArrondissement[arr];
+                const isSelected = selectedArr === arr;
                 const hasSymbols = arrStats.total > 0;
                 const isComplete = arrStats.collected === arrStats.total && arrStats.total > 0;
+                const hasProgress = arrStats.collected > 0 && !isComplete;
 
                 return (
                   <g key={arr}>
-                    {/* Arrondissement circle */}
-                    <circle
-                      cx={pos.x}
-                      cy={pos.y}
-                      r={isSelected ? 7 : 5.5}
-                      fill={getArrColor(arrNum)}
-                      stroke={isSelected ? '#003D2C' : 'rgba(0, 61, 44, 0.3)'}
-                      strokeWidth={isSelected ? 2 : 1}
+                    <path
+                      d={path}
+                      fill={
+                        isComplete ? 'rgba(0, 61, 44, 0.25)' :
+                        hasProgress ? 'rgba(0, 61, 44, 0.12)' :
+                        'transparent'
+                      }
+                      stroke={isSelected ? '#003D2C' : 'rgba(0, 61, 44, 0.4)'}
+                      strokeWidth={isSelected ? 2 : 0.8}
                       style={{
                         cursor: hasSymbols ? 'pointer' : 'default',
-                        transition: 'all 0.3s ease'
+                        transition: 'all 0.3s ease',
+                        opacity: isSelected ? 1 : 0.7
                       }}
-                      onClick={() => hasSymbols && setSelectedArr(isSelected ? null : arrNum)}
+                      onClick={() => hasSymbols && setSelectedArr(isSelected ? null : arr)}
+                      onMouseEnter={(e) => {
+                        if (hasSymbols) {
+                          e.currentTarget.style.opacity = '1';
+                          e.currentTarget.style.strokeWidth = '1.5';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.opacity = '0.7';
+                          e.currentTarget.style.strokeWidth = '0.8';
+                        }
+                      }}
                     />
-
-                    {/* Arrondissement number */}
                     <text
-                      x={pos.x}
-                      y={pos.y + 0.8}
+                      x={labelX}
+                      y={labelY}
                       textAnchor="middle"
-                      dominantBaseline="middle"
                       style={{
-                        fontSize: '3px',
+                        fontSize: '11px',
                         fontFamily: 'var(--font-sans)',
-                        fill: isComplete ? '#FAF8F2' : '#003D2C',
-                        fontWeight: isSelected ? '600' : '400',
+                        fill: isComplete ? '#003D2C' : 'rgba(0, 61, 44, 0.5)',
+                        fontWeight: isSelected ? '600' : '300',
                         pointerEvents: 'none'
                       }}
                     >
                       {arr}
                     </text>
-
-                    {/* Collection indicator */}
+                    {/* Collection dot indicator */}
                     {arrStats.collected > 0 && (
                       <circle
-                        cx={pos.x + 4}
-                        cy={pos.y - 4}
-                        r={2}
+                        cx={labelX + 12}
+                        cy={labelY - 8}
+                        r={4}
                         fill="#003D2C"
+                        style={{ pointerEvents: 'none' }}
                       />
                     )}
                   </g>
                 );
               })}
-
-              {/* Title */}
-              <text
-                x="50"
-                y="92"
-                textAnchor="middle"
-                style={{
-                  fontSize: '4px',
-                  fontFamily: 'var(--font-serif)',
-                  fill: '#1A1A1A',
-                  opacity: 0.4,
-                  fontStyle: 'italic'
-                }}
-              >
-                Clique sur un arrondissement
-              </text>
             </svg>
 
             {/* Legend */}
