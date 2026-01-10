@@ -6,6 +6,7 @@ import { OrigineMap } from './components/OrigineMap';
 import { HistoireArchives } from './components/HistoireArchives';
 import { CarnetParisien } from './components/CarnetParisien';
 import { CollectionMap } from './components/CollectionMap';
+import { HunterMontmartre } from './components/HunterMontmartre';
 import { CardEntry } from './components/CardEntry';
 import { initializeCard, activateCard, type CardStatus } from './utils/card-service';
 
@@ -151,6 +152,10 @@ export default function App() {
         if (!selectedQueteId) {
           navigateTo('quetes');
           return null;
+        }
+        // Hunter: Montmartre has its own treasure hunt component
+        if (selectedQueteId === 'hunter-montmartre') {
+          return <HunterMontmartre onBack={() => navigateTo('homepage')} />;
         }
         return <QueteDetail queteId={selectedQueteId} onBack={() => navigateTo('quetes')} />;
       case 'carnet':

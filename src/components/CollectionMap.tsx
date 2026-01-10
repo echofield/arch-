@@ -8,6 +8,40 @@ interface CollectionMapProps {
   onBack: () => void;
 }
 
+// Role evolution based on collection progress
+interface WalkerRole {
+  name: string;
+  title: string;
+  threshold: number;
+}
+
+const WALKER_ROLES: WalkerRole[] = [
+  { name: 'Voyageur', title: 'Tu commences ton parcours', threshold: 0 },
+  { name: 'Guide', title: 'Tu connais quelques secrets', threshold: 6 },
+  { name: 'Héros', title: 'Collectionneur aguerri', threshold: 16 },
+  { name: 'Gardien', title: 'Protecteur de la mémoire', threshold: 26 }
+];
+
+function getWalkerRole(collected: number): WalkerRole {
+  for (let i = WALKER_ROLES.length - 1; i >= 0; i--) {
+    if (collected >= WALKER_ROLES[i].threshold) {
+      return WALKER_ROLES[i];
+    }
+  }
+  return WALKER_ROLES[0];
+}
+
+function getNextRole(collected: number): { role: WalkerRole; remaining: number } | null {
+  const currentIndex = WALKER_ROLES.findIndex((r, i) =>
+    collected >= r.threshold && (i === WALKER_ROLES.length - 1 || collected < WALKER_ROLES[i + 1].threshold)
+  );
+  if (currentIndex < WALKER_ROLES.length - 1) {
+    const next = WALKER_ROLES[currentIndex + 1];
+    return { role: next, remaining: next.threshold - collected };
+  }
+  return null;
+}
+
 // SVG Paths for Paris arrondissements (escargot pattern from center)
 const ARRONDISSEMENT_PATHS: { arr: number; path: string; labelX: number; labelY: number }[] = [
   // 1er - Louvre (centre)
@@ -69,6 +103,8 @@ export function CollectionMap({ onBack }: CollectionMapProps) {
   };
 
   const symbols = selectedArr ? getSymbolsByArrondissement(selectedArr) : [];
+  const currentRole = getWalkerRole(stats.collected);
+  const nextRole = getNextRole(stats.collected);
 
   return (
     <div
@@ -93,6 +129,40 @@ export function CollectionMap({ onBack }: CollectionMapProps) {
       >
         {/* Header */}
         <header style={{ textAlign: 'center', marginBottom: '32px' }}>
+          {/* Role Badge */}
+          <div
+            style={{
+              display: 'inline-block',
+              padding: '8px 20px',
+              background: 'rgba(0, 61, 44, 0.08)',
+              border: '1px solid rgba(0, 61, 44, 0.2)',
+              marginBottom: '16px'
+            }}
+          >
+            <p
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '10px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: '#003D2C',
+                marginBottom: '4px'
+              }}
+            >
+              Ton rang
+            </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#003D2C'
+              }}
+            >
+              {currentRole.name}
+            </p>
+          </div>
+
           <h1
             style={{
               fontFamily: 'var(--font-serif)',
@@ -111,11 +181,24 @@ export function CollectionMap({ onBack }: CollectionMapProps) {
               fontSize: '16px',
               fontStyle: 'italic',
               color: '#1A1A1A',
-              opacity: 0.6
+              opacity: 0.6,
+              marginBottom: '8px'
             }}
           >
             {stats.collected} / {stats.total} symboles collectés
           </p>
+          {nextRole && (
+            <p
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '11px',
+                color: '#003D2C',
+                opacity: 0.5
+              }}
+            >
+              {nextRole.remaining} symbole{nextRole.remaining > 1 ? 's' : ''} avant de devenir <strong>{nextRole.role.name}</strong>
+            </p>
+          )}
         </header>
 
         {/* Map Container */}
