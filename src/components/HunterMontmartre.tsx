@@ -67,10 +67,24 @@ const MONTMARTRE_HUNT: HunterSymbol[] = [
   }
 ];
 
-type HuntPhase = 'intro' | 'riddle' | 'hunting' | 'proof' | 'success' | 'complete';
+type HuntPhase = 'intro' | 'riddle' | 'hunting' | 'gps_check' | 'proof' | 'success' | 'complete';
 
 const RIDDLE_TIME = 30; // seconds
 const COOLDOWN_TIME = 60; // seconds after wrong answer
+const GPS_RADIUS_METERS = 100; // Must be within 100m of symbol
+
+// Calculate distance between two coordinates in meters (Haversine formula)
+function getDistanceMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371000; // Earth's radius in meters
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 export function HunterMontmartre({ onBack }: HunterMontmartreProps) {
   // Find first uncollected symbol or start from beginning
@@ -91,6 +105,8 @@ export function HunterMontmartre({ onBack }: HunterMontmartreProps) {
   const [cooldown, setCooldown] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(false);
+  const [gpsStatus, setGpsStatus] = useState<'checking' | 'success' | 'too_far' | 'error' | null>(null);
+  const [gpsDistance, setGpsDistance] = useState<number | null>(null);
 
   const currentSymbol = MONTMARTRE_HUNT[currentSymbolIndex];
   const collectedCount = MONTMARTRE_HUNT.filter(s => isSymbolCollected(s.id)).length;
@@ -142,6 +158,65 @@ export function HunterMontmartre({ onBack }: HunterMontmartreProps) {
       setCooldown(COOLDOWN_TIME);
       setPhase('intro');
     }
+  };
+
+  const tryGpsVerification = () => {
+    setPhase('gps_check');
+    setGpsStatus('checking');
+    setGpsDistance(null);
+    setError(null);
+
+    if (!navigator.geolocation) {
+      // GPS not supported, fall back to question
+      setGpsStatus('error');
+      setTimeout(() => {
+        setPhase('proof');
+        setProofAnswer('');
+      }, 1500);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const distance = getDistanceMeters(
+          position.coords.latitude,
+          position.coords.longitude,
+          currentSymbol.coordinates.lat,
+          currentSymbol.coordinates.lng
+        );
+        setGpsDistance(Math.round(distance));
+
+        if (distance <= GPS_RADIUS_METERS) {
+          // Success! User is at the location
+          setGpsStatus('success');
+          setTimeout(() => {
+            collectSymbol(currentSymbol.id);
+            setPhase('success');
+          }, 1500);
+        } else {
+          // Too far, fall back to question
+          setGpsStatus('too_far');
+          setTimeout(() => {
+            setPhase('proof');
+            setProofAnswer('');
+          }, 2000);
+        }
+      },
+      (err) => {
+        // GPS error, fall back to question
+        console.log('GPS error:', err.message);
+        setGpsStatus('error');
+        setTimeout(() => {
+          setPhase('proof');
+          setProofAnswer('');
+        }, 1500);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   };
 
   const startProof = () => {
@@ -594,7 +669,7 @@ export function HunterMontmartre({ onBack }: HunterMontmartreProps) {
               </p>
 
               <button
-                onClick={startProof}
+                onClick={tryGpsVerification}
                 style={{
                   width: '100%',
                   background: '#003D2C',
@@ -611,6 +686,126 @@ export function HunterMontmartre({ onBack }: HunterMontmartreProps) {
                 Je l'ai trouvé
               </button>
             </>
+          )}
+
+          {/* GPS CHECK PHASE */}
+          {phase === 'gps_check' && currentSymbol && (
+            <div style={{ textAlign: 'center', padding: '32px 0' }}>
+              {gpsStatus === 'checking' && (
+                <>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      border: '3px solid rgba(0, 61, 44, 0.2)',
+                      borderTopColor: '#003D2C',
+                      borderRadius: '50%',
+                      margin: '0 auto 24px',
+                      animation: 'spin 1s linear infinite'
+                    }}
+                  />
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '18px',
+                      color: '#1A1A1A',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    Vérification GPS...
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '12px',
+                      color: '#003D2C',
+                      opacity: 0.6
+                    }}
+                  >
+                    Es-tu vraiment à {currentSymbol.location}?
+                  </p>
+                </>
+              )}
+
+              {gpsStatus === 'success' && (
+                <>
+                  <p style={{ fontSize: '48px', marginBottom: '16px' }}>📍</p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '20px',
+                      color: '#003D2C',
+                      fontWeight: '600',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    Position confirmée!
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '12px',
+                      color: '#1A1A1A',
+                      opacity: 0.6
+                    }}
+                  >
+                    Tu es bien sur place. Symbole validé.
+                  </p>
+                </>
+              )}
+
+              {gpsStatus === 'too_far' && (
+                <>
+                  <p style={{ fontSize: '48px', marginBottom: '16px' }}>🗺️</p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '18px',
+                      color: '#1A1A1A',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    Tu sembles être à {gpsDistance}m
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '12px',
+                      color: '#003D2C',
+                      opacity: 0.6
+                    }}
+                  >
+                    Pas de souci — réponds à une question pour valider.
+                  </p>
+                </>
+              )}
+
+              {gpsStatus === 'error' && (
+                <>
+                  <p style={{ fontSize: '48px', marginBottom: '16px' }}>📡</p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '18px',
+                      color: '#1A1A1A',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    GPS indisponible
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '12px',
+                      color: '#003D2C',
+                      opacity: 0.6
+                    }}
+                  >
+                    On passe à la question de vérification.
+                  </p>
+                </>
+              )}
+            </div>
           )}
 
           {/* PROOF PHASE */}
@@ -860,6 +1055,14 @@ export function HunterMontmartre({ onBack }: HunterMontmartreProps) {
             Les réponses de preuve ne sont trouvables que sur place.
           </p>
         )}
+
+        {/* Spinner animation */}
+        <style>{`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     </div>
   );
