@@ -5,10 +5,11 @@ import { QueteDetail } from './components/QueteDetail';
 import { OrigineMap } from './components/OrigineMap';
 import { HistoireArchives } from './components/HistoireArchives';
 import { CarnetParisien } from './components/CarnetParisien';
+import { CollectionMap } from './components/CollectionMap';
 import { CardEntry } from './components/CardEntry';
 import { initializeCard, activateCard, type CardStatus } from './utils/card-service';
 
-type Screen = 'homepage' | 'origine' | 'quetes' | 'histoire' | 'detail' | 'carnet';
+type Screen = 'homepage' | 'origine' | 'quetes' | 'histoire' | 'detail' | 'carnet' | 'collection';
 type AppState = 'loading' | 'no_card' | 'validating' | 'invalid' | 'welcome' | 'ready';
 
 /**
@@ -82,6 +83,8 @@ export default function App() {
         setCurrentScreen('histoire');
       } else if (hash === 'carnet') {
         setCurrentScreen('carnet');
+      } else if (hash === 'collection') {
+        setCurrentScreen('collection');
       } else if (hash === 'quetes') {
         setCurrentScreen('quetes');
       } else if (hash.startsWith('quete/')) {
@@ -130,6 +133,7 @@ export default function App() {
             onEnterHistoire={() => navigateTo('histoire')}
             onEnterCarnet={() => navigateTo('carnet')}
             onEnterHunter={() => navigateTo('detail', 'hunter-montmartre')}
+            onEnterCollection={() => navigateTo('collection')}
           />
         );
       case 'origine':
@@ -151,6 +155,8 @@ export default function App() {
         return <QueteDetail queteId={selectedQueteId} onBack={() => navigateTo('quetes')} />;
       case 'carnet':
         return <CarnetParisien cardId={cardStatus?.cardId || 'unknown'} onBack={() => navigateTo('homepage')} />;
+      case 'collection':
+        return <CollectionMap onBack={() => navigateTo('homepage')} />;
       default:
         return null;
     }

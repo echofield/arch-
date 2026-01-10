@@ -8,6 +8,7 @@ interface HomepageV1Props {
   onEnterHistoire?: () => void;
   onEnterCarnet?: () => void;
   onEnterHunter?: () => void;
+  onEnterCollection?: () => void;
 }
 
 /**
@@ -24,7 +25,7 @@ interface HomepageV1Props {
  * 
  * L'interface doit pouvoir exister imprimée.
  */
-export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onEnterCarnet, onEnterHunter }: HomepageV1Props) {
+export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onEnterCarnet, onEnterHunter, onEnterCollection }: HomepageV1Props) {
   return (
     <div 
       className="min-h-screen relative flex items-center justify-center"
@@ -377,6 +378,26 @@ export function HomepageV1({ onEnterQuetes, onEnterOrigine, onEnterHistoire, onE
           onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
         >
           Carnet
+        </button>
+        <button
+          onClick={onEnterCollection}
+          className="small-caps"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '11px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#003D2C',
+            opacity: 0.6,
+            cursor: 'pointer',
+            transition: 'opacity var(--transition)'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+        >
+          Ma Carte
         </button>
       </nav>
 
