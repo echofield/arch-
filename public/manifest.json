@@ -1,0 +1,19 @@
+{
+  "name": "ARCHÉ - Votre Paris commence ici",
+  "short_name": "ARCHÉ",
+  "description": "Explorez Paris autrement. Collectionnez les symboles cachés de la ville.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F2",
+  "theme_color": "#003D2C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["travel", "lifestyle", "entertainment"]
+}
